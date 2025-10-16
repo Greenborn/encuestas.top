@@ -1,0 +1,211 @@
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { isAuthenticated, getUserData, logout, saveReturnUrl } from '@/utils/session'
+
+const router = useRouter()
+const isAuth = ref(false)
+const userData = ref(null)
+const showMobileMenu = ref(false)
+
+const updateAuthStatus = () => {
+  isAuth.value = isAuthenticated()
+  userData.value = getUserData()
+}
+
+const handleLogout = () => {
+  logout()
+  updateAuthStatus()
+  closeMobileMenu()
+  router.push('/')
+}
+
+const handleLogin = () => {
+  saveReturnUrl(router.currentRoute.value.fullPath)
+  window.location.href = import.meta.env.VITE_SSO_GOOGLE_URL || 'https://auth.greenborn.com.ar/auth/google'
+}
+
+const handleCreateEncuesta = () => {
+  if (!isAuth.value) {
+    saveReturnUrl('/encuestas/nueva')
+    router.push('/restringida')
+  } else {
+    router.push('/encuestas/nueva')
+  }
+  closeMobileMenu()
+}
+
+const closeMobileMenu = () => {
+  showMobileMenu.value = false
+  const navbarCollapse = document.getElementById('navbarNav')
+  if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+    const bsCollapse = window.bootstrap.Collapse.getInstance(navbarCollapse)
+    if (bsCollapse) {
+      bsCollapse.hide()
+    }
+  }
+}
+
+const navigateTo = (path) => {
+  router.push(path)
+  closeMobileMenu()
+}
+
+onMounted(() => {
+  updateAuthStatus()
+  
+  // Escuchar eventos de storage para sincronizar entre pestañas
+  window.addEventListener('storage', updateAuthStatus)
+})
+</script>
+
+<template>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
+    <div class="container">
+      <router-link to="/" class="navbar-brand d-flex align-items-center" @click="closeMobileMenu">
+        <span class="brand-icon">📊</span>
+        <span class="brand-text">Encuestas<span class="brand-dot">.top</span></span>
+      </router-link>
+      
+      <button 
+        class="navbar-toggler" 
+        type="button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#navbarNav" 
+        aria-controls="navbarNav" 
+        aria-expanded="false" 
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a 
+              class="nav-link" 
+              href="#" 
+              @click.prevent="navigateTo('/')"
+            >
+              🏠 Inicio
+            </a>
+          </li>
+          <li class="nav-item">
+            <a 
+              class="nav-link" 
+              href="#" 
+              @click.prevent="navigateTo('/encuestas')"
+            >
+              📋 Encuestas
+            </a>
+          </li>
+          <li class="nav-item">
+            <a 
+              class="nav-link" 
+              href="#" 
+              @click.prevent="handleCreateEncuesta"
+            >
+              ➕ Crear Encuesta
+            </a>
+          </li>
+          <li class="nav-item">
+            <a 
+              v-if="!isAuth" 
+              class="nav-link btn-login" 
+              href="#" 
+              @click.prevent="handleLogin"
+            >
+              🔐 Iniciar Sesión
+            </a>
+            <div v-else class="nav-link dropdown">
+              <a
+                class="dropdown-toggle text-decoration-none"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                👤 {{ userData?.nombre || 'Usuario' }}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="#" @click.prevent="handleLogout">
+                    🚪 Cerrar Sesión
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</template>
+
+<style scoped>
+.navbar {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+  border-bottom: 3px solid #74ACDF;
+}
+
+.brand-icon {
+  font-size: 1.8rem;
+  margin-right: 0.5rem;
+}
+
+.brand-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0057B7;
+}
+
+.brand-dot {
+  color: #74ACDF;
+}
+
+.nav-link {
+  font-weight: 500;
+  color: #333;
+  transition: all 0.3s ease;
+  margin: 0 0.25rem;
+  padding: 0.5rem 1rem !important;
+}
+
+.nav-link:hover {
+  color: #0057B7;
+  background-color: rgba(116, 172, 223, 0.1);
+  border-radius: 0.375rem;
+}
+
+.btn-login {
+  background: linear-gradient(135deg, #0057B7 0%, #74ACDF 100%);
+  color: white !important;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1.5rem !important;
+}
+
+.btn-login:hover {
+  background: linear-gradient(135deg, #004494 0%, #5a93c8 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 87, 183, 0.3);
+}
+
+.dropdown-menu {
+  border: 1px solid #74ACDF;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(116, 172, 223, 0.1);
+  color: #0057B7;
+}
+
+@media (max-width: 991px) {
+  .nav-link {
+    margin: 0.25rem 0;
+  }
+  
+  .btn-login {
+    margin-top: 0.5rem;
+  }
+}
+</style>

@@ -1,0 +1,23 @@
+{
+  "name": "encuestas-top-frontend",
+  "version": "1.0.0",
+  "description": "Frontend para miniaplicación de encuestas públicas",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0",
+    "axios": "^1.6.7",
+    "bootstrap": "^5.3.3",
+    "chart.js": "^4.4.1",
+    "html2canvas": "^1.4.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "vite": "^5.1.5"
+  }
+}

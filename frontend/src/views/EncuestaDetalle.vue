@@ -1,0 +1,230 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import encuestasService from '@/services/encuestasService'
+import { isAuthenticated } from '@/utils/session'
+import { formatDate, isExpired } from '@/utils/helpers'
+import GraficoResultados from '@/components/GraficoResultados.vue'
+import CompartirModal from '@/components/CompartirModal.vue'
+import VotarModal from '@/components/VotarModal.vue'
+
+const router = useRouter()
+const route = useRoute()
+
+const encuesta = ref(null)
+const opciones = ref([])
+const resultados = ref(null)
+const loading = ref(true)
+const error = ref(null)
+const showCompartirModal = ref(false)
+const showVotarModal = ref(false)
+
+const puedeVotar = ref(false)
+
+const cargarDatos = async () => {
+  try {
+    loading.value = true
+    error.value = null
+    
+    const id = route.params.id
+    
+    // Cargar encuesta y opciones en paralelo
+    const [encuestaData, opcionesData, resultadosData] = await Promise.all([
+      encuestasService.getEncuesta(id),
+      encuestasService.getOpciones(id),
+      encuestasService.getResultados(id)
+    ])
+    
+    encuesta.value = encuestaData
+    opciones.value = opcionesData
+    resultados.value = resultadosData
+    
+    // Verificar si puede votar
+    puedeVotar.value = encuestaData.puede_votar && !isExpired(encuestaData.fecha_finalizacion)
+    
+  } catch (err) {
+    error.value = 'Error al cargar la encuesta. Por favor, intenta nuevamente.'
+    console.error('Error cargando encuesta:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+const handleVotar = () => {
+  if (!isAuthenticated()) {
+    router.push('/restringida')
+    return
+  }
+  showVotarModal.value = true
+}
+
+const handleVotoExitoso = () => {
+  showVotarModal.value = false
+  cargarDatos() // Recargar datos
+}
+
+const handleCompartir = () => {
+  showCompartirModal.value = true
+}
+
+const handleVolver = () => {
+  router.push('/encuestas')
+}
+
+onMounted(() => {
+  cargarDatos()
+})
+</script>
+
+<template>
+  <div class="encuesta-detalle-container">
+    <div class="container">
+      <div v-if="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-3 text-muted">Cargando encuesta...</p>
+      </div>
+
+      <div v-else-if="error" class="alert alert-danger" role="alert">
+        {{ error }}
+        <button class="btn btn-sm btn-outline-danger ms-3" @click="cargarDatos">
+          Reintentar
+        </button>
+      </div>
+
+      <div v-else-if="encuesta">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <button class="btn btn-outline-secondary" @click="handleVolver">
+            ← Volver a encuestas
+          </button>
+          <button class="btn btn-outline-primary" @click="handleCompartir">
+            📤 Compartir
+          </button>
+        </div>
+
+        <div class="encuesta-card">
+          <div class="card-header">
+            <h1 class="encuesta-titulo">{{ encuesta.titulo }}</h1>
+            <p class="encuesta-descripcion">{{ encuesta.descripcion }}</p>
+            <div class="encuesta-meta">
+              <span class="badge bg-info me-2">
+                📅 Cierre: {{ formatDate(encuesta.fecha_finalizacion) }}
+              </span>
+              <span 
+                class="badge" 
+                :class="isExpired(encuesta.fecha_finalizacion) ? 'bg-danger' : 'bg-success'"
+              >
+                {{ isExpired(encuesta.fecha_finalizacion) ? '🔒 Finalizada' : '✅ Activa' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div v-if="puedeVotar" class="alert alert-info d-flex justify-content-between align-items-center">
+              <span>¿Ya votaste? Elegí tu opción y participá 🗳️</span>
+              <button class="btn btn-primary" @click="handleVotar">
+                Votar Ahora
+              </button>
+            </div>
+
+            <div v-else-if="!isExpired(encuesta.fecha_finalizacion)" class="alert alert-warning">
+              Ya has votado en esta encuesta 👍
+            </div>
+
+            <h3 class="resultados-titulo">📊 Resultados</h3>
+            
+            <GraficoResultados 
+              v-if="resultados && opciones.length > 0"
+              :resultados="resultados"
+              :opciones="opciones"
+            />
+
+            <div v-else class="text-center text-muted py-4">
+              No hay votos todavía. ¡Sé el primero en votar!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <CompartirModal
+      v-if="showCompartirModal && encuesta"
+      :encuesta="encuesta"
+      @close="showCompartirModal = false"
+    />
+
+    <VotarModal
+      v-if="showVotarModal && encuesta"
+      :encuesta="encuesta"
+      @close="showVotarModal = false"
+      @voto-exitoso="handleVotoExitoso"
+    />
+  </div>
+</template>
+
+<style scoped>
+.encuesta-detalle-container {
+  padding: 2rem 0 4rem;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.encuesta-card {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.card-header {
+  background: linear-gradient(135deg, #74ACDF 0%, #0057B7 100%);
+  color: white;
+  padding: 2.5rem;
+}
+
+.encuesta-titulo {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.encuesta-descripcion {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.95;
+}
+
+.encuesta-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.encuesta-meta .badge {
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+}
+
+.card-body {
+  padding: 2.5rem;
+}
+
+.resultados-titulo {
+  color: #0057B7;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+}
+
+@media (max-width: 768px) {
+  .encuesta-titulo {
+    font-size: 1.8rem;
+  }
+  
+  .card-header,
+  .card-body {
+    padding: 1.5rem;
+  }
+}
+</style>
