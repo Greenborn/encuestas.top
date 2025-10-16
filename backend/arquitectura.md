@@ -6,6 +6,7 @@ El presente documento define la estructura base del backend, de miniaplicación 
 - Framework: Express
 - Base de Datos: MariaDB gestionada con Knex
 - Librerías Extras: Axios
+- express-rate-limit para configurar maxima cantidad de votos por ventana de tiempo
 
 ## Base de datos
 A continuación se definen las tablas principales para la gestión de encuestas y votos:
@@ -23,11 +24,14 @@ A continuación se definen las tablas principales para la gestión de encuestas 
 - descripcion (TEXT)
 - fecha_creacion (DATETIME)
 - id_usuario (INT, FK -> usuario.id_usuario) //usuario que creo la encuesta
+- fecha_finalizacion (DATETIME) 
+- resultado_preliminar (JSON) //json que resume la cantidad de votos para cada opcion
 
 ### Tabla: opcion_encuesta
 - id_opcion (INT, PK, AI)
 - id_encuesta (INT, FK -> encuesta.id_encuesta)
 - texto_opcion (VARCHAR)
+- color (VARCHAR) //se especifica codigo de color en hexadecimal
 
 ### Tabla: voto_encuesta
 - id (INT, PK, AI)
@@ -50,6 +54,7 @@ los parametros a configuragar en .env son:
 - usuario base de datos
 - contraseña usuario base de datos
 - url servicio de autenticacion
+- url de servicio rate limit
 
 ## Endpoints
 A continuación se definen los principales endpoints REST para la gestión de usuarios, encuestas, opciones y votos:
@@ -59,7 +64,7 @@ A continuación se definen los principales endpoints REST para la gestión de us
 
 ### Encuestas
 - `POST /api/encuestas` — Crear nueva encuesta - auth requerida espera query param unique_id
-- `GET /api/encuestas` — Listar encuestas públicas
+- `GET /api/encuestas` — Listar encuestas públicas - auth optativa espera query param unique_id sino se recibe se supone que esta en vista publica, en caso de tener sesion se debe indicar si el usuario actuial esta habilitado para votar (solo se puede votar una vez por usuario)
 - `GET /api/encuestas/:id` — Obtener detalles de una encuesta
 - `DELETE /api/encuestas/:id` — Eliminar encuesta (solo propietario) - auth requerida espera query param unique_id
 
@@ -68,7 +73,7 @@ A continuación se definen los principales endpoints REST para la gestión de us
 - `GET /api/encuestas/:id/opciones` — Listar opciones de una encuesta
 
 ### Votos
-- `POST /api/encuestas/:id/votar` — Votar por una opción en una encuesta - auth requerida espera query param unique_id
+- `POST /api/encuestas/:id/votar` — Votar por una opción en una encuesta - auth requerida espera query param unique_id  se aplica rate limit
 - `GET /api/encuestas/:id/resultados` — Obtener resultados de la encuesta
 
 Cada endpoint requiere autenticación JWT excepto los de registro, login y consulta pública de encuestas/resultados.
