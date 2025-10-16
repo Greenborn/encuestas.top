@@ -37,3 +37,38 @@ A continuación se definen las tablas principales para la gestión de encuestas 
 - fecha_creacion (DATETIME)
 
 > PK = Primary Key, AI = Auto Increment, FK = Foreign Key
+
+## Configuraciones
+Las configuraciones se definiran en .env
+No olvides agregar .gitignore
+No olvides agregar .env.example
+
+los parametros a configuragar en .env son:
+- puerto escucha
+- servidor base de datos
+- nombre base de datos
+- usuario base de datos
+- contraseña usuario base de datos
+- url servicio de autenticacion
+
+## Endpoints
+A continuación se definen los principales endpoints REST para la gestión de usuarios, encuestas, opciones y votos:
+
+### Usuarios
+- Se modulo sso_general, se debe usar midleware de autenticacion, por lo que el manejo de sesiones esta delegado en servicio externo
+
+### Encuestas
+- `POST /api/encuestas` — Crear nueva encuesta - auth requerida espera query param unique_id
+- `GET /api/encuestas` — Listar encuestas públicas
+- `GET /api/encuestas/:id` — Obtener detalles de una encuesta
+- `DELETE /api/encuestas/:id` — Eliminar encuesta (solo propietario) - auth requerida espera query param unique_id
+
+### Opciones de encuesta
+- `POST /api/encuestas/:id/opciones` — Agregar opción a encuesta (solo propietario)  - auth requerida espera query param unique_id
+- `GET /api/encuestas/:id/opciones` — Listar opciones de una encuesta
+
+### Votos
+- `POST /api/encuestas/:id/votar` — Votar por una opción en una encuesta - auth requerida espera query param unique_id
+- `GET /api/encuestas/:id/resultados` — Obtener resultados de la encuesta
+
+Cada endpoint requiere autenticación JWT excepto los de registro, login y consulta pública de encuestas/resultados.
