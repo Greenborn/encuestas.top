@@ -132,7 +132,6 @@ const minDate = new Date().toISOString().split('T')[0]
             {{ error }}
           </div>
 
-          <form @submit.prevent="handleSubmit">
             <div class="mb-4">
               <label for="titulo" class="form-label fw-bold">Título *</label>
               <input
@@ -259,15 +258,15 @@ const minDate = new Date().toISOString().split('T')[0]
                 Cancelar
               </button>
               <button
-                type="submit"
+                type="button"
                 class="btn btn-primary btn-lg"
                 :disabled="loading"
+                @click="handleSubmit"
               >
                 <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
                 {{ loading ? 'Creando...' : '✅ Crear Encuesta' }}
               </button>
             </div>
-          </form>
         </div>
       </div>
     </div>
