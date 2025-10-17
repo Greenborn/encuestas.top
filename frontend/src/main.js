@@ -16,7 +16,8 @@ getUniqueId()
 // Configurar la URL del SSO desde .env
 sessionModule.setConfig({
 	ssoUrl: import.meta.env.VITE_URL_SSO_SERVICE,
-	appBaseUrl: window.location.origin
+	appBaseUrl: import.meta.env.VITE_APP_BASE,
+    storagePrefix: 'app_encuestas_',
 })
 
 const app = createApp(App)

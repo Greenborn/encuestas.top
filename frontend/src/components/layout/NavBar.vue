@@ -27,7 +27,7 @@ const handleLogin = () => {
   } else {
     localStorage.setItem('encuestas_top_return_url', router.currentRoute.value.fullPath);
   }
-  window.location.href = sessionModule.getSSOLoginUrl ? sessionModule.getSSOLoginUrl() : (import.meta.env.VITE_SSO_GOOGLE_URL || 'https://auth.greenborn.com.ar/auth/google');
+  window.location.href = sessionModule.getSSOLoginUrl();
 }
 
 const handleCreateEncuesta = () => {

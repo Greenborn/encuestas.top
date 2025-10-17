@@ -89,7 +89,7 @@ import sessionModule from './services/sessionModule';
 sessionModule.setConfig({
   ssoUrl: 'https://sso.misitio.com',
   appBaseUrl: 'https://app.misitio.com',
-  storagePrefix: 'app_mascotas_',
+  storagePrefix: 'app_encuestas_',
 });
 ```
 
