@@ -1,8 +1,12 @@
 <script setup>
-import { saveReturnUrl } from '@/utils/session'
+import sessionModule from '../session/sessionModule';
 
 const handleLogin = () => {
-  saveReturnUrl(window.location.hash.replace('#', ''))
+  if (sessionModule.saveReturnUrl) {
+    sessionModule.saveReturnUrl(window.location.hash.replace('#', ''));
+  } else {
+    localStorage.setItem('encuestas_top_return_url', window.location.hash.replace('#', ''));
+  }
   window.location.href = import.meta.env.VITE_SSO_GOOGLE_URL || 'https://auth.greenborn.com.ar/auth/google'
 }
 </script>

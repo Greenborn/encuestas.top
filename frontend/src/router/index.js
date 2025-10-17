@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { isAuthenticated, saveReturnUrl } from '@/utils/session'
+import { sessionRoutes } from '../session';
+import sessionModule from '../session/sessionModule';
 
 const routes = [
   {
@@ -38,12 +39,14 @@ const routes = [
     component: () => import('@/views/Restringida.vue'),
     meta: { title: 'Área Restringida' }
   },
+  // Rutas de sesión del módulo
+  ...sessionRoutes,
   {
     path: '/login',
     name: 'Login',
     beforeEnter: () => {
       // Redirigir directamente al SSO de Google
-      window.location.href = import.meta.env.VITE_SSO_GOOGLE_URL || 'https://auth.greenborn.com.ar/auth/google'
+      window.location.href = sessionModule.getSSOLoginUrl ? sessionModule.getSSOLoginUrl() : (import.meta.env.VITE_SSO_GOOGLE_URL || 'https://auth.greenborn.com.ar/auth/google');
     }
   },
   {
@@ -57,20 +60,23 @@ const router = createRouter({
   routes
 })
 
-// Guard global para rutas protegidas
+// Guard global para rutas protegidas usando sessionModule
 router.beforeEach((to, from, next) => {
   // Actualizar título de la página
-  document.title = to.meta.title ? `${to.meta.title} - Encuestas.top` : 'Encuestas.top'
-  
+  document.title = to.meta.title ? `${to.meta.title} - Encuestas.top` : 'Encuestas.top';
   // Verificar autenticación para rutas protegidas
-  if (to.meta.requiresAuth && !isAuthenticated()) {
+  if (to.meta.requiresAuth && !sessionModule.isAuthenticated()) {
     // Guardar la URL de destino para redirigir después del login
-    saveReturnUrl(to.fullPath)
-    // Redirigir a página restringida
-    next('/restringida')
+    if (sessionModule.saveReturnUrl) {
+      sessionModule.saveReturnUrl(to.fullPath);
+    } else {
+      localStorage.setItem('encuestas_top_return_url', to.fullPath);
+    }
+    // Redirigir a página de registro requerido
+    next('/registro-requerido');
   } else {
-    next()
+    next();
   }
-})
+});
 
 export default router

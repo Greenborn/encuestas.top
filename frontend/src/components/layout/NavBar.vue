@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { isAuthenticated, getUserData, logout, saveReturnUrl } from '@/utils/session'
+import sessionModule from '../../session/sessionModule';
 
 const router = useRouter()
 const isAuth = ref(false)
@@ -9,30 +9,39 @@ const userData = ref(null)
 const showMobileMenu = ref(false)
 
 const updateAuthStatus = () => {
-  isAuth.value = isAuthenticated()
-  userData.value = getUserData()
+  isAuth.value = sessionModule.isAuthenticated();
+  const session = sessionModule.getSessionData ? sessionModule.getSessionData() : null;
+  userData.value = session && session.user ? session.user : null;
 }
 
 const handleLogout = () => {
-  logout()
-  updateAuthStatus()
-  closeMobileMenu()
-  router.push('/')
+  if (sessionModule.logout) sessionModule.logout();
+  updateAuthStatus();
+  closeMobileMenu();
+  router.push('/');
 }
 
 const handleLogin = () => {
-  saveReturnUrl(router.currentRoute.value.fullPath)
-  window.location.href = import.meta.env.VITE_SSO_GOOGLE_URL || 'https://auth.greenborn.com.ar/auth/google'
+  if (sessionModule.saveReturnUrl) {
+    sessionModule.saveReturnUrl(router.currentRoute.value.fullPath);
+  } else {
+    localStorage.setItem('encuestas_top_return_url', router.currentRoute.value.fullPath);
+  }
+  window.location.href = sessionModule.getSSOLoginUrl ? sessionModule.getSSOLoginUrl() : (import.meta.env.VITE_SSO_GOOGLE_URL || 'https://auth.greenborn.com.ar/auth/google');
 }
 
 const handleCreateEncuesta = () => {
   if (!isAuth.value) {
-    saveReturnUrl('/encuestas/nueva')
-    router.push('/restringida')
+    if (sessionModule.saveReturnUrl) {
+      sessionModule.saveReturnUrl('/encuestas/nueva');
+    } else {
+      localStorage.setItem('encuestas_top_return_url', '/encuestas/nueva');
+    }
+    router.push('/registro-requerido');
   } else {
-    router.push('/encuestas/nueva')
+    router.push('/encuestas/nueva');
   }
-  closeMobileMenu()
+  closeMobileMenu();
 }
 
 const closeMobileMenu = () => {

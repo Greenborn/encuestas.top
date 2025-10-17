@@ -10,8 +10,14 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import './assets/styles/main.css'
 
 // Inicializar unique_id al cargar la aplicación
-import { getUniqueId } from './utils/session'
+import sessionModule, { getUniqueId } from './session/sessionModule'
 getUniqueId()
+
+// Configurar la URL del SSO desde .env
+sessionModule.setConfig({
+	ssoUrl: import.meta.env.VITE_URL_SSO_SERVICE,
+	appBaseUrl: window.location.origin
+})
 
 const app = createApp(App)
 

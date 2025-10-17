@@ -35,7 +35,7 @@ cp .env.example .env
 
 ```env
 VITE_API_BASE_URL=http://localhost:3000/api
-VITE_SSO_URL=https://auth.greenborn.com.ar
+VITE_URL_SSO_SERVICE=https://auth.greenborn.com.ar
 VITE_SSO_GOOGLE_URL=https://auth.greenborn.com.ar/auth/google
 ```
 

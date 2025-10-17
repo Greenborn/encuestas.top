@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import encuestasService from '@/services/encuestasService'
-import { isAuthenticated, saveReturnUrl } from '@/utils/session'
+import sessionModule from '../session/sessionModule';
 import { randomColor, isValidHexColor } from '@/utils/helpers'
 
 const router = useRouter()
@@ -74,11 +74,15 @@ const validarFormulario = () => {
 }
 
 const handleSubmit = async () => {
-  if (!isAuthenticated()) {
-    saveReturnUrl('/encuestas/nueva')
-    router.push('/restringida')
-    return
-  }
+    if (!sessionModule.isAuthenticated()) {
+      if (sessionModule.saveReturnUrl) {
+        sessionModule.saveReturnUrl('/encuestas/nueva');
+      } else {
+        localStorage.setItem('encuestas_top_return_url', '/encuestas/nueva');
+      }
+      router.push('/registro-requerido');
+      return;
+    }
   
   if (!validarFormulario()) {
     return

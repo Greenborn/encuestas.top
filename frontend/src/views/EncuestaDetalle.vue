@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import encuestasService from '@/services/encuestasService'
-import { isAuthenticated } from '@/utils/session'
+import sessionModule from '../session/sessionModule';
 import { formatDate, isExpired } from '@/utils/helpers'
 import GraficoResultados from '@/components/GraficoResultados.vue'
 import CompartirModal from '@/components/CompartirModal.vue'
@@ -51,7 +51,7 @@ const cargarDatos = async () => {
 }
 
 const handleVotar = () => {
-  if (!isAuthenticated()) {
+  if (!sessionModule.isAuthenticated()) {
     router.push('/restringida')
     return
   }
