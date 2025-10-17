@@ -3,7 +3,7 @@ exports.up = function(knex) {
     table.increments('id').primary();
     table.integer('id_opcion').unsigned().notNullable();
     table.integer('id_encuesta').unsigned().notNullable();
-    table.integer('id_usuario').unsigned().notNullable();
+    table.string('id_usuario', 255).notNullable();
     table.datetime('fecha_creacion').defaultTo(knex.fn.now());
     
     // Foreign keys

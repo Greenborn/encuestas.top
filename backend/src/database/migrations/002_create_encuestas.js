@@ -4,7 +4,7 @@ exports.up = function(knex) {
     table.string('titulo', 255).notNullable();
     table.text('descripcion');
     table.datetime('fecha_creacion').defaultTo(knex.fn.now());
-    table.integer('id_usuario').unsigned().notNullable();
+    table.string('id_usuario', 255).notNullable();
     table.datetime('fecha_finalizacion');
     table.json('resultado_preliminar');
     
