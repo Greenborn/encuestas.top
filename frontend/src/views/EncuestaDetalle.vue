@@ -11,37 +11,22 @@ import VotarModal from '@/components/VotarModal.vue'
 const router = useRouter()
 const route = useRoute()
 
+
 const encuesta = ref(null)
-const opciones = ref([])
-const resultados = ref(null)
 const loading = ref(true)
 const error = ref(null)
 const showCompartirModal = ref(false)
 const showVotarModal = ref(false)
-
 const puedeVotar = ref(false)
 
 const cargarDatos = async () => {
   try {
     loading.value = true
     error.value = null
-    
     const id = route.params.id
-    
-    // Cargar encuesta y opciones en paralelo
-    const [encuestaData, opcionesData, resultadosData] = await Promise.all([
-      encuestasService.getEncuesta(id),
-      encuestasService.getOpciones(id),
-      encuestasService.getResultados(id)
-    ])
-    
-    encuesta.value = encuestaData
-    opciones.value = opcionesData
-    resultados.value = resultadosData
-    
-    // Verificar si puede votar
-    puedeVotar.value = encuestaData.puede_votar && !isExpired(encuestaData.fecha_finalizacion)
-    
+    const encuestaData = await encuestasService.getEncuesta(id)
+    encuesta.value = encuestaData.data
+    puedeVotar.value = encuestaData.data?.puede_votar && !isExpired(encuestaData.data?.fecha_finalizacion)
   } catch (err) {
     error.value = 'Error al cargar la encuesta. Por favor, intenta nuevamente.'
     console.error('Error cargando encuesta:', err)
@@ -107,7 +92,7 @@ onMounted(() => {
           <div class="card-header">
             <h1 class="encuesta-titulo">{{ encuesta.titulo }}</h1>
             <p class="encuesta-descripcion">{{ encuesta.descripcion }}</p>
-            <div class="encuesta-meta">
+            <div class="encuesta-meta mb-2">
               <span class="badge bg-info me-2">
                 📅 Cierre: {{ formatDate(encuesta.fecha_finalizacion) }}
               </span>
@@ -117,6 +102,12 @@ onMounted(() => {
               >
                 {{ isExpired(encuesta.fecha_finalizacion) ? '🔒 Finalizada' : '✅ Activa' }}
               </span>
+            </div>
+            <div class="encuesta-info bg-light text-dark rounded p-3 mt-2">
+              <div><strong>🗓️ Creación:</strong> {{ formatDate(encuesta.fecha_creacion) }}</div>
+              <div><strong>👤 Creador:</strong> {{ encuesta.nombre_creador }}</div>
+              <div><strong>✉️ Email:</strong> {{ encuesta.email_creador }}</div>
+              <div><strong>🧮 Total de votos:</strong> {{ encuesta.total_votos }}</div>
             </div>
           </div>
 
@@ -135,9 +126,9 @@ onMounted(() => {
             <h3 class="resultados-titulo">📊 Resultados</h3>
             
             <GraficoResultados 
-              v-if="resultados && opciones.length > 0"
-              :resultados="resultados"
-              :opciones="opciones"
+              v-if="encuesta && encuesta.opciones && encuesta.opciones.length > 0"
+              :resultados="encuesta.resultado_preliminar"
+              :opciones="encuesta.opciones"
             />
 
             <div v-else class="text-center text-muted py-4">
