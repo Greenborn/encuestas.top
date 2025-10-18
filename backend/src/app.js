@@ -14,6 +14,9 @@ const { generalLimiter } = require('./middleware/rateLimiter');
 
 const app = express();
 
+// Permitir obtener la IP real del cliente si hay proxy (X-Forwarded-For)
+app.set('trust proxy', true);
+
 // Configuración de seguridad
 app.use(helmet({
   contentSecurityPolicy: {
