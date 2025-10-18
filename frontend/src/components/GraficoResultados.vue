@@ -25,7 +25,7 @@ const datosGrafico = computed(() => {
   const backgroundColor = []
 
   props.opciones.forEach(opcion => {
-    const votos = props.resultados[opcion.id_opcion] || 0
+    const votos = props.resultados[opcion.id_opcion]?.votos || 0
     labels.push(opcion.texto_opcion)
     data.push(votos)
     backgroundColor.push(opcion.color)
@@ -128,7 +128,7 @@ onMounted(() => {
     <div class="grafico-header">
       <div class="total-votos">
         <span class="total-label">Total de votos:</span>
-        <span class="total-numero">{{ totalVotos }}</span>
+  <span class="total-numero">{{ typeof totalVotos === 'number' ? totalVotos : (totalVotos?.value ?? 0) }}</span>
       </div>
       
       <div class="grafico-controles">
@@ -180,9 +180,9 @@ onMounted(() => {
             <span class="fila-nombre">{{ opcion.texto_opcion }}</span>
           </div>
           <div class="fila-stats">
-            <span class="fila-votos">{{ resultados[opcion.id_opcion] || 0 }} votos</span>
+            <span class="fila-votos">{{ resultados[opcion.id_opcion]?.votos || 0 }} votos</span>
             <span class="fila-porcentaje">
-              {{ totalVotos > 0 ? ((resultados[opcion.id_opcion] || 0) / totalVotos * 100).toFixed(1) : 0 }}%
+              {{ totalVotos > 0 ? ((resultados[opcion.id_opcion]?.votos || 0) / totalVotos * 100).toFixed(1) : 0 }}%
             </span>
           </div>
         </div>

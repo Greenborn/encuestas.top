@@ -105,9 +105,6 @@ onMounted(() => {
             </div>
             <div class="encuesta-info bg-light text-dark rounded p-3 mt-2">
               <div><strong>🗓️ Creación:</strong> {{ formatDate(encuesta.fecha_creacion) }}</div>
-              <div><strong>👤 Creador:</strong> {{ encuesta.nombre_creador }}</div>
-              <div><strong>✉️ Email:</strong> {{ encuesta.email_creador }}</div>
-              <div><strong>🧮 Total de votos:</strong> {{ encuesta.total_votos }}</div>
             </div>
           </div>
 
