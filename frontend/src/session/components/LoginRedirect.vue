@@ -38,13 +38,17 @@ onMounted(async () => {
     });
     const result = await response.json();
     if (result.success) {
+      // Guardar solo datos mínimos del usuario, sin email ni name
+      const minimalUser = { ...result.data.user };
+      delete minimalUser.email;
+      delete minimalUser.name;
       sessionModule.saveSession({
         bearer_token: result.data.bearer_token,
         expires_at: result.data.expires_at,
-        user: result.data.user
+        user: minimalUser
       });
       success.value = true;
-      userName.value = result.data.user.name;
+      userName.value = '';
       // Redirección priorizando encuestas_top_return_url
       let redirectUrl = localStorage.getItem('encuestas_top_return_url');
       if (!redirectUrl || !redirectUrl.startsWith('/')) {

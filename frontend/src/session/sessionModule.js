@@ -45,7 +45,15 @@ export function getUniqueId() {
 function saveSession({ bearer_token, expires_at, user }) {
   localStorage.setItem(getStorageKey('bearer_token'), bearer_token);
   localStorage.setItem(getStorageKey('expires_at'), expires_at);
-  localStorage.setItem(getStorageKey('user'), JSON.stringify(user));
+  // Guardar solo datos mínimos del usuario, sin email ni name
+  if (user) {
+    const minimalUser = { ...user };
+    delete minimalUser.email;
+    delete minimalUser.name;
+    localStorage.setItem(getStorageKey('user'), JSON.stringify(minimalUser));
+  } else {
+    localStorage.setItem(getStorageKey('user'), 'null');
+  }
   window.dispatchEvent(new Event(config.storagePrefix + 'login'));
 }
 
