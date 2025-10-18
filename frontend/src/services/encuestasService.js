@@ -7,9 +7,13 @@ export default {
   /**
    * Obtener lista de encuestas públicas
    */
-  async getEncuestas() {
-    const response = await apiClient.get('/encuestas')
-    return response.data
+  async getEncuestas({ page = 1, limit = 10, search } = {}) {
+    const params = {};
+    if (page) params.page = page;
+    if (limit) params.limit = limit;
+    if (search) params.search = search;
+    const response = await apiClient.get('/encuestas', { params });
+    return response.data;
   },
 
   /**

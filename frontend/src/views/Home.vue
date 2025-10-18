@@ -288,4 +288,3 @@ const navigateTo = (path) => {
   color: #dfc21c;
 }
 </style>
-

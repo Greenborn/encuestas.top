@@ -36,7 +36,7 @@ const routes = [
   {
     path: '/restringida',
     name: 'Restringida',
-    component: () => import('@/views/Restringida.vue'),
+  component: () => import('@/session/components/RegistroRequerido.vue'),
     meta: { title: 'Área Restringida' }
   },
   // Rutas de sesión del módulo

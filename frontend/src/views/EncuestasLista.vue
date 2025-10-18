@@ -1,17 +1,24 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import encuestasService from '@/services/encuestasService'
 import EncuestaCard from '@/components/EncuestaCard.vue'
 import VotarModal from '@/components/VotarModal.vue'
 
 const router = useRouter()
+
 const encuestas = ref([])
 const loading = ref(true)
 const error = ref(null)
 const searchQuery = ref('')
 const selectedEncuesta = ref(null)
 const showVotarModal = ref(false)
+
+// Paginación
+const page = ref(1)
+const limit = ref(10)
+const totalPages = ref(1)
+const totalItems = ref(0)
 
 const encuestasFiltradas = computed(() => {
   if (!searchQuery.value) {
@@ -29,8 +36,14 @@ const cargarEncuestas = async () => {
   try {
     loading.value = true
     error.value = null
-  const data = await encuestasService.getEncuestas()
-  encuestas.value = data.data.encuestas
+    const data = await encuestasService.getEncuestas({
+      page: page.value,
+      limit: limit.value,
+      search: searchQuery.value || undefined
+    })
+    encuestas.value = data.data.encuestas
+    totalPages.value = data.data.pagination.pages
+    totalItems.value = data.data.pagination.total
   } catch (err) {
     error.value = 'Error al cargar las encuestas. Por favor, intenta nuevamente.'
     console.error('Error cargando encuestas:', err)
@@ -57,7 +70,19 @@ const handleCrearEncuesta = () => {
   router.push('/encuestas/nueva')
 }
 
+
 onMounted(() => {
+  cargarEncuestas()
+})
+
+// Recargar encuestas al cambiar de página o límite
+watch([page, limit], () => {
+  cargarEncuestas()
+})
+
+// Si se hace una búsqueda, volver a la página 1 y recargar
+watch(searchQuery, () => {
+  page.value = 1
   cargarEncuestas()
 })
 </script>
@@ -130,17 +155,27 @@ onMounted(() => {
           @votar="handleVotar"
         />
       </div>
-    </div>
 
-    <VotarModal
-      v-if="showVotarModal && selectedEncuesta"
-      :encuesta="selectedEncuesta"
-      @close="showVotarModal = false"
-      @voto-exitoso="handleVotoExitoso"
-    />
+      <!-- Controles de paginación -->
+      <div v-if="totalPages > 1 && !loading && !error" class="pagination-controls d-flex justify-content-center align-items-center mt-4">
+        <button class="btn btn-outline-primary me-2" :disabled="page === 1" @click="page--">
+          ← Anterior
+        </button>
+        <span class="mx-2">Página {{ page }} de {{ totalPages }}</span>
+        <button class="btn btn-outline-primary ms-2" :disabled="page === totalPages" @click="page++">
+          Siguiente →
+        </button>
+      </div>
+
+      <VotarModal
+        v-if="showVotarModal && selectedEncuesta"
+        :encuesta="selectedEncuesta"
+        @close="showVotarModal = false"
+        @voto-exitoso="handleVotoExitoso"
+      />
+    </div>
   </div>
 </template>
-
 <style scoped>
 .encuestas-lista-container {
   padding: 2rem 0 4rem;
