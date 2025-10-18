@@ -190,8 +190,11 @@ class EncuestasController {
       // Verificar estado del usuario con respecto a esta encuesta
       let puedeVotar = false;
       let yaVoto = false;
+      let esPropietario = false;
 
       if (userId) {
+        // Comparar como string para evitar problemas de tipo
+        esPropietario = String(userId) === String(encuesta.id_usuario);
         const votoExistente = await db('voto_encuesta')
           .where({
             id_encuesta: id,
@@ -209,7 +212,7 @@ class EncuestasController {
           ...encuesta,
           puede_votar: puedeVotar,
           ya_voto: yaVoto,
-          es_propietario: userId === encuesta.id_usuario
+          es_propietario: esPropietario
         }
       });
 
