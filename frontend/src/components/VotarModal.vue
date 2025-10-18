@@ -20,8 +20,10 @@ const error = ref(null)
 const cargarOpciones = async () => {
   try {
     loadingOpciones.value = true
-    const data = await encuestasService.getOpciones(props.encuesta.id_encuesta)
-    opciones.value = data
+  const data = await encuestasService.getOpciones(props.encuesta.id_encuesta)
+  console.log('Respuesta getOpciones:', data)
+  console.log('Opciones:', data.opciones)
+  opciones.value = data.data.opciones
   } catch (err) {
     error.value = 'Error al cargar las opciones'
     console.error('Error cargando opciones:', err)
