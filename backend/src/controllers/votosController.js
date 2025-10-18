@@ -83,8 +83,8 @@ class VotosController {
         id_usuario: userId
       });
 
-      // Actualizar resultado preliminar
-      await this.actualizarResultadoPreliminar(id);
+        // Actualizar resultado preliminar
+        await VotosController.actualizarResultadoPreliminar(id);
 
       // Obtener información actualizada de la opción votada
       const opcionActualizada = await db('opcion_encuesta')
