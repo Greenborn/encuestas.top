@@ -72,13 +72,15 @@ onMounted(() => {
   updateAuthStatus()
   // Escuchar eventos de storage para sincronizar entre pestañas
   window.addEventListener('storage', updateAuthStatus)
-  // Escuchar evento personalizado de login (genérico)
+  // Escuchar evento personalizado de login/logout (genérico)
   window.addEventListener('app_encuestas_login', updateAuthStatus)
+  window.addEventListener('app_encuestas_logout', updateAuthStatus)
 })
 
 onUnmounted(() => {
   window.removeEventListener('storage', updateAuthStatus)
   window.removeEventListener('app_encuestas_login', updateAuthStatus)
+  window.removeEventListener('app_encuestas_logout', updateAuthStatus)
 })
 </script>
 

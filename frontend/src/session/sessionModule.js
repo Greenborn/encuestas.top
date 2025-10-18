@@ -126,6 +126,8 @@ async function logout() {
     });
   } catch {}
   clearSession();
+  // Disparar evento personalizado de logout
+  window.dispatchEvent(new Event((config.storagePrefix || 'app_encuestas_') + 'logout'));
 }
 
 export default {
