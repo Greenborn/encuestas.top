@@ -1,17 +1,25 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import sessionModule from '../../session/sessionModule';
 
 const router = useRouter()
 const isAuth = ref(false)
 const userData = ref(null)
+const userPhoto = ref('')
 const showMobileMenu = ref(false)
 
 const updateAuthStatus = () => {
   isAuth.value = sessionModule.isAuthenticated();
   const session = sessionModule.getSessionData ? sessionModule.getSessionData() : null;
-  userData.value = session && session.user ? session.user : null;
+  // El objeto puede ser { usuario, usuario_id, token, uniqueId }
+  const user = session && (session.usuario || session.user);
+  userData.value = user || null;
+  if (user && user.profile_img_base64) {
+    userPhoto.value = `data:image/jpeg;base64,${user.profile_img_base64}`;
+  } else {
+    userPhoto.value = '';
+  }
 }
 
 const handleLogout = () => {
@@ -62,9 +70,15 @@ const navigateTo = (path) => {
 
 onMounted(() => {
   updateAuthStatus()
-  
   // Escuchar eventos de storage para sincronizar entre pestañas
   window.addEventListener('storage', updateAuthStatus)
+  // Escuchar evento personalizado de login (genérico)
+  window.addEventListener('app_encuestas_login', updateAuthStatus)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('storage', updateAuthStatus)
+  window.removeEventListener('app_encuestas_login', updateAuthStatus)
 })
 </script>
 
@@ -126,15 +140,18 @@ onMounted(() => {
             >
               🔐 Iniciar Sesión
             </a>
-            <div v-else class="nav-link dropdown">
+            <div v-else class="nav-link dropdown d-flex align-items-center">
               <a
-                class="dropdown-toggle text-decoration-none"
+                class="dropdown-toggle text-decoration-none d-flex align-items-center"
                 href="#"
                 role="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                👤 {{ userData?.nombre || 'Usuario' }}
+                <span v-if="userPhoto" class="profile-img me-2">
+                  <img :src="userPhoto" alt="Foto de perfil" />
+                </span>
+                {{ userData?.nombre || userData?.name || 'Usuario' }}
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li>
@@ -206,6 +223,16 @@ onMounted(() => {
 .dropdown-item:hover {
   background-color: rgba(116, 172, 223, 0.1);
   color: #0057B7;
+}
+
+.profile-img img {
+  width: 2rem;
+  height: 2rem;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #74ACDF;
+  background: #fff;
+  display: block;
 }
 
 @media (max-width: 991px) {
