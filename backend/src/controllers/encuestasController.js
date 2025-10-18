@@ -111,7 +111,7 @@ class EncuestasController {
         .limit(limit)
         .offset(offset);
 
-      // Para cada encuesta, verificar si el usuario puede votar
+      // Para cada encuesta, verificar si el usuario puede votar y agregar opciones
       const encuestasConEstado = await Promise.all(
         encuestas.map(async (encuesta) => {
           let puedeVotar = false;
@@ -129,11 +129,18 @@ class EncuestasController {
             puedeVotar = !yaVoto && (!encuesta.fecha_finalizacion || new Date(encuesta.fecha_finalizacion) > new Date());
           }
 
+          // Obtener opciones de la encuesta
+          const opciones = await db('opcion_encuesta')
+            .select('*')
+            .where('id_encuesta', encuesta.id_encuesta)
+            .orderBy('id_opcion');
+
           return {
             ...encuesta,
             puede_votar: puedeVotar,
             ya_voto: yaVoto,
-            es_propietario: userId === encuesta.id_usuario
+            es_propietario: userId === encuesta.id_usuario,
+            opciones
           };
         })
       );
