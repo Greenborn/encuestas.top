@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import EncuestasListaHome from './EncuestasListaHome.vue'
 
 const router = useRouter()
 
@@ -99,6 +100,11 @@ const navigateTo = (path) => {
           Crear mi primera encuesta 🚀
         </button>
       </div>
+    </div>
+
+    <!-- Vista de encuestas activas -->
+    <div class="home-encuestas-section mt-5 mb-5">
+      <EncuestasListaHome />
     </div>
   </div>
 </template>
