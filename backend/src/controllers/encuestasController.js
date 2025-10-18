@@ -344,7 +344,18 @@ class EncuestasController {
       body('fecha_finalizacion')
         .optional()
         .isISO8601()
-        .withMessage('La fecha de finalización debe ser válida'),
+        .withMessage('La fecha de finalización debe ser válida')
+        .custom((value) => {
+          if (!value) return true;
+          // Si viene solo la fecha, agregar hora 23:59:59
+          let fecha = value.length === 10 ? `${value}T23:59:59` : value;
+          const fechaFinal = new Date(fecha);
+          const ahora = new Date();
+          if (fechaFinal <= ahora) {
+            throw new Error('La fecha de cierre debe ser futura');
+          }
+          return true;
+        }),
       
       body('opciones')
         .optional()

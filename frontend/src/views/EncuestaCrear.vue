@@ -55,7 +55,11 @@ const validarFormulario = () => {
   if (!formData.value.fecha_finalizacion) {
     errors.value.fecha_finalizacion = 'La fecha de cierre es requerida'
   } else {
-    const fechaCierre = new Date(formData.value.fecha_finalizacion)
+    // Si viene solo la fecha, agregar hora 23:59:00
+    let fechaCierreStr = formData.value.fecha_finalizacion.length === 10
+      ? `${formData.value.fecha_finalizacion}T23:59:00`
+      : formData.value.fecha_finalizacion;
+    const fechaCierre = new Date(fechaCierreStr);
     if (fechaCierre <= new Date()) {
       errors.value.fecha_finalizacion = 'La fecha de cierre debe ser futura'
     }
@@ -104,10 +108,10 @@ const handleSubmit = async () => {
       opciones: opciones.value
     }
 
-    const result = await encuestasService.crearEncuesta(payload)
+  const result = await encuestasService.crearEncuesta(payload)
 
-    // Redirigir al detalle de la encuesta creada
-    router.push(`/encuestas/${result.id_encuesta}`)
+  // Redirigir al detalle de la encuesta creada
+  router.push(`/encuestas/${result.data.id_encuesta}`)
 
   } catch (err) {
     error.value = err.response?.data?.error || 'Error al crear la encuesta. Por favor, intenta nuevamente.'
