@@ -17,9 +17,14 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expirado o inválido
-      localStorage.removeItem('encuestas_top_jwt_token')
-      localStorage.removeItem('encuestas_top_user_data')
+      // Token expirado o inválido: limpiar sesión global y disparar evento
+      import('../session/sessionModule').then((mod) => {
+        if (mod.default && mod.default.clearSession) {
+          mod.default.clearSession();
+          // Disparar evento de logout
+          window.dispatchEvent(new Event('app_encuestas_logout'));
+        }
+      });
     }
     return Promise.reject(error)
   }
