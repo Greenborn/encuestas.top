@@ -84,7 +84,6 @@ class EncuestasController {
       let query = db('encuesta')
         .select(
           'encuesta.*',
-          'usuario.nombre as nombre_creador',
           db.raw('COUNT(voto_encuesta.id) as total_votos')
         )
         .leftJoin('usuario', 'encuesta.id_usuario', 'usuario.id_usuario')
@@ -135,8 +134,10 @@ class EncuestasController {
             .where('id_encuesta', encuesta.id_encuesta)
             .orderBy('id_opcion');
 
+          // Eliminar nombre_creador y email_creador si existen
+          const { nombre_creador, email_creador, ...encuestaSinCreador } = encuesta;
           return {
-            ...encuesta,
+            ...encuestaSinCreador,
             puede_votar: puedeVotar,
             ya_voto: yaVoto,
             es_propietario: userId === encuesta.id_usuario,
@@ -203,13 +204,20 @@ class EncuestasController {
           .first();
 
         yaVoto = !!votoExistente;
-        puedeVotar = !yaVoto && (!encuesta.fecha_finalizacion || new Date(encuesta.fecha_finalizacion) > new Date());
+        let fechaFin = encuesta.fecha_finalizacion;
+        if (fechaFin && typeof fechaFin === 'string' && fechaFin.length === 10) {
+          // Si solo viene la fecha, agregar hora 23:59:59 en UTC
+          fechaFin = `${fechaFin}T23:59:59Z`;
+        }
+        puedeVotar = !yaVoto && (!fechaFin || new Date(fechaFin) > new Date());
       }
 
+      // Eliminar nombre_creador y email_creador si existen
+      const { nombre_creador, email_creador, ...encuestaSinCreador } = encuesta;
       res.json({
         success: true,
         data: {
-          ...encuesta,
+          ...encuestaSinCreador,
           puede_votar: puedeVotar,
           ya_voto: yaVoto,
           es_propietario: esPropietario
@@ -277,9 +285,7 @@ class EncuestasController {
   static async obtenerEncuestaCompleta(id_encuesta) {
     const encuesta = await db('encuesta')
       .select(
-        'encuesta.*',
-        'usuario.nombre as nombre_creador',
-        'usuario.email as email_creador'
+        'encuesta.*'
       )
       .leftJoin('usuario', 'encuesta.id_usuario', 'usuario.id_usuario')
       .where('encuesta.id_encuesta', id_encuesta)

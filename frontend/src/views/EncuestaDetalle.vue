@@ -25,8 +25,8 @@ const cargarDatos = async () => {
     error.value = null
     const id = route.params.id
     const encuestaData = await encuestasService.getEncuesta(id)
-    encuesta.value = encuestaData.data
-    puedeVotar.value = !isExpired(encuestaData.data?.ya_voto)
+  encuesta.value = encuestaData.data
+  puedeVotar.value = encuestaData.data && encuestaData.data.puede_votar
   } catch (err) {
     error.value = 'Error al cargar la encuesta. Por favor, intenta nuevamente.'
     console.error('Error cargando encuesta:', err)
@@ -109,6 +109,7 @@ onMounted(() => {
           </div>
 
           <div class="card-body">
+
             <div v-if="puedeVotar" class="alert alert-info d-flex justify-content-between align-items-center">
               <span>¿Ya votaste? Elegí tu opción y participá 🗳️</span>
               <button class="btn btn-primary" @click="handleVotar">
@@ -116,8 +117,12 @@ onMounted(() => {
               </button>
             </div>
 
-            <div v-else-if="!isExpired(encuesta.fecha_finalizacion)" class="alert alert-warning">
+            <div v-else-if="!isExpired(encuesta.fecha_finalizacion) && encuesta.ya_voto" class="alert alert-warning">
               Ya has votado en esta encuesta 👍
+            </div>
+
+            <div v-else-if="isExpired(encuesta.fecha_finalizacion)" class="alert alert-danger">
+              La encuesta ha finalizado. Ya no se puede votar.
             </div>
 
             <h3 class="resultados-titulo">📊 Resultados</h3>
