@@ -14,8 +14,9 @@ const { generalLimiter } = require('./middleware/rateLimiter');
 
 const app = express();
 
-// Permitir obtener la IP real del cliente si hay proxy (X-Forwarded-For)
-app.set('trust proxy', true);
+// Permitir obtener la IP real del cliente solo si el proxy es local (loopback)
+// Esto evita vulnerabilidades con express-rate-limit
+app.set('trust proxy', 'loopback');
 
 // Configuración de seguridad
 app.use(helmet({
