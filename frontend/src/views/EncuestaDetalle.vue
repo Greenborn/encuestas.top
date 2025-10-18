@@ -145,7 +145,15 @@ onMounted(() => {
       v-if="showCompartirModal && encuesta"
       :encuesta="encuesta"
       @close="showCompartirModal = false"
-    />
+    >
+      <template #grafico>
+        <GraficoResultados 
+          v-if="encuesta && encuesta.opciones && encuesta.opciones.length > 0"
+          :resultados="encuesta.resultado_preliminar"
+          :opciones="encuesta.opciones"
+        />
+      </template>
+    </CompartirModal>
 
     <VotarModal
       v-if="showVotarModal && encuesta"

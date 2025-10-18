@@ -46,53 +46,23 @@ const handleCompartirFacebook = () => {
   window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank')
 }
 
+const graficoRef = ref(null)
+
 const handleDescargarImagen = async () => {
   try {
     descargandoImagen.value = true
-    
-    // Crear un elemento temporal para capturar
-    const tempDiv = document.createElement('div')
-    tempDiv.style.cssText = `
-      position: absolute;
-      left: -9999px;
-      top: 0;
-      padding: 2rem;
-      background: linear-gradient(135deg, #74ACDF 0%, #0057B7 100%);
-      width: 800px;
-      border-radius: 15px;
-    `
-    
-    tempDiv.innerHTML = `
-      <div style="background: white; padding: 2rem; border-radius: 15px;">
-        <h1 style="color: #0057B7; margin-bottom: 1rem; font-size: 2rem;">${props.encuesta.titulo}</h1>
-        <p style="color: #666; margin-bottom: 1.5rem;">${props.encuesta.descripcion}</p>
-        <div style="text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 10px;">
-          <div style="font-size: 4rem; margin-bottom: 1rem;">📊</div>
-          <p style="font-size: 1.2rem; color: #0057B7; font-weight: bold; margin: 0;">
-            ¡Participá en esta encuesta!
-          </p>
-        </div>
-        <div style="margin-top: 2rem; text-align: center; color: #666; font-size: 0.9rem;">
-          Visitá: encuestas.top
-        </div>
-      </div>
-    `
-    
-    document.body.appendChild(tempDiv)
-    
-    const canvas = await html2canvas(tempDiv, {
+    // Captura el área del gráfico y la tabla de resultados
+    const graficoEl = graficoRef.value
+    if (!graficoEl) throw new Error('No se encontró el gráfico para capturar')
+    const canvas = await html2canvas(graficoEl, {
       backgroundColor: null,
       scale: 2
     })
-    
-    document.body.removeChild(tempDiv)
-    
     // Descargar la imagen
     const link = document.createElement('a')
-    link.download = `encuesta-${props.encuesta.id_encuesta}.png`
+    link.download = `encuesta-${props.encuesta.id_encuesta}-resultados.png`
     link.href = canvas.toDataURL('image/png')
     link.click()
-    
   } catch (error) {
     console.error('Error al descargar imagen:', error)
     alert('Error al generar la imagen')
@@ -114,6 +84,7 @@ const handleClose = () => {
           <h3 class="modal-title">📤 Compartir Encuesta</h3>
           <button type="button" class="btn-close" @click="handleClose"></button>
         </div>
+
 
         <div class="modal-body">
           <div class="encuesta-preview">
@@ -165,6 +136,11 @@ const handleClose = () => {
                 Facebook
               </button>
             </div>
+          </div>
+
+          <!-- Contenedor del gráfico y tabla para capturar -->
+          <div ref="graficoRef">
+            <slot name="grafico" />
           </div>
 
           <div class="compartir-seccion">
