@@ -3,9 +3,9 @@ const router = express.Router();
 const EncuestasController = require('../controllers/encuestasController');
 const OpcionesController = require('../controllers/opcionesController');
 const VotosController = require('../controllers/votosController');
-const authMiddleware = require('../middleware/auth');
 const authSessionMiddleware = require('../middleware/authSessionMiddleware');
 const { votingLimiter, createPollLimiter } = require('../middleware/rateLimiter');
+const { authSessionMiddlewareOpcional } = require('../middleware/authSessionMiddleware');
 
 // Rutas de encuestas
 router.post('/', 
@@ -16,11 +16,10 @@ router.post('/',
 );
 
 router.get('/', 
-  authMiddleware(false), 
+  authSessionMiddlewareOpcional, 
   EncuestasController.listarEncuestas
 );
 
-const { authSessionMiddlewareOpcional } = require('../middleware/authSessionMiddleware');
 router.get('/:id', 
   authSessionMiddlewareOpcional,
   EncuestasController.obtenerEncuesta
