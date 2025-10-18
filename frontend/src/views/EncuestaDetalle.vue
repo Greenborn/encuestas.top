@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import encuestasService from '@/services/encuestasService'
 import sessionModule from '../session/sessionModule';
@@ -12,12 +12,14 @@ const router = useRouter()
 const route = useRoute()
 
 
+
 const encuesta = ref(null)
 const loading = ref(true)
 const error = ref(null)
 const showCompartirModal = ref(false)
 const showVotarModal = ref(false)
 const puedeVotar = ref(false)
+const votoPendienteProcesado = ref(false)
 
 const cargarDatos = async () => {
   try {
@@ -35,13 +37,12 @@ const cargarDatos = async () => {
   }
 }
 
+
 const handleVotar = () => {
-  if (!sessionModule.isAuthenticated()) {
-    router.push('/restringida')
-    return
-  }
+  // Si no hay sesión, mostrar modal de votar (el modal se encarga de guardar voto pendiente y redirigir a login)
   showVotarModal.value = true
 }
+
 
 const handleVotoExitoso = () => {
   showVotarModal.value = false
@@ -56,8 +57,30 @@ const handleVolver = () => {
   router.push('/encuestas')
 }
 
+
 onMounted(() => {
   cargarDatos()
+
+  // Si hay sesión y hay voto pendiente, procesar voto automáticamente
+  const votoPendiente = localStorage.getItem('encuestas_top_voto_pendiente')
+  if (sessionModule.isAuthenticated() && votoPendiente && !votoPendienteProcesado.value) {
+    try {
+      const { id_encuesta, id_opcion } = JSON.parse(votoPendiente)
+      // Solo procesar si corresponde a esta encuesta
+      if (id_encuesta == route.params.id && id_opcion) {
+        votoPendienteProcesado.value = true
+        // Realizar petición de voto y actualizar resultados
+        encuestasService.votar(id_encuesta, { id_opcion })
+          .then(() => {
+            localStorage.removeItem('encuestas_top_voto_pendiente')
+            cargarDatos()
+          })
+          .catch(() => {
+            // Si falla, no borrar el voto pendiente para reintentar
+          })
+      }
+    } catch {}
+  }
 })
 </script>
 
@@ -110,14 +133,15 @@ onMounted(() => {
 
           <div class="card-body">
 
-            <div v-if="puedeVotar" class="alert alert-info d-flex justify-content-between align-items-center">
+
+            <div v-if="(!isExpired(encuesta.fecha_finalizacion) && (!encuesta.ya_voto || !sessionModule.isAuthenticated())) || puedeVotar" class="alert alert-info d-flex justify-content-between align-items-center">
               <span>¿Ya votaste? Elegí tu opción y participá 🗳️</span>
               <button class="btn btn-primary" @click="handleVotar">
                 Votar Ahora
               </button>
             </div>
 
-            <div v-else-if="!isExpired(encuesta.fecha_finalizacion) && encuesta.ya_voto" class="alert alert-warning">
+            <div v-else-if="!isExpired(encuesta.fecha_finalizacion) && encuesta.ya_voto && sessionModule.isAuthenticated()" class="alert alert-warning">
               Ya has votado en esta encuesta 👍
             </div>
 
