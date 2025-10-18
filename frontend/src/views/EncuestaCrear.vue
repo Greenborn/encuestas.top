@@ -10,7 +10,7 @@ const router = useRouter()
 const formData = ref({
   titulo: '',
   descripcion: '',
-  fecha_finalizacion: ''
+  fecha_finalizacion: '' // formato yyyy-mm-dd
 })
 
 const opciones = ref([
@@ -91,17 +91,24 @@ const handleSubmit = async () => {
   try {
     loading.value = true
     error.value = null
-    
+
+    // Si la fecha viene como yyyy-mm-dd, agregar hora 23:59:00
+    let fechaFinalizacion = formData.value.fecha_finalizacion
+    if (fechaFinalizacion && fechaFinalizacion.length === 10) {
+      fechaFinalizacion = `${fechaFinalizacion}T23:59:00`
+    }
+
     const payload = {
       ...formData.value,
+      fecha_finalizacion: fechaFinalizacion,
       opciones: opciones.value
     }
-    
+
     const result = await encuestasService.crearEncuesta(payload)
-    
+
     // Redirigir al detalle de la encuesta creada
     router.push(`/encuestas/${result.id_encuesta}`)
-    
+
   } catch (err) {
     error.value = err.response?.data?.error || 'Error al crear la encuesta. Por favor, intenta nuevamente.'
     console.error('Error creando encuesta:', err)
@@ -169,7 +176,7 @@ const minDate = new Date().toISOString().split('T')[0]
               <input
                 id="fecha_finalizacion"
                 v-model="formData.fecha_finalizacion"
-                type="datetime-local"
+                type="date"
                 class="form-control"
                 :class="{ 'is-invalid': errors.fecha_finalizacion }"
                 :min="minDate"
