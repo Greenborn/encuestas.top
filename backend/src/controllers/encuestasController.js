@@ -104,9 +104,9 @@ class EncuestasController {
     // Asegurar que total.count existe y es número
     const totalCount = total && (typeof total.count === 'string' ? Number(total.count) : total.count) || 0;
 
-      // Aplicar paginación
+      // Aplicar orden: primero por total_votos desc, luego por fecha_creacion desc
       const encuestas = await query
-        .orderBy('encuesta.fecha_creacion', 'desc')
+        .orderBy([{ column: db.raw('COUNT(voto_encuesta.id)'), order: 'desc' }, { column: 'encuesta.fecha_creacion', order: 'desc' }])
         .limit(limit)
         .offset(offset);
 
