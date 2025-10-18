@@ -13,7 +13,7 @@ const emit = defineEmits(['ver-detalle', 'votar'])
 
 const totalVotos = computed(() => {
   if (!props.encuesta.resultado_preliminar) return 0
-  return Object.values(props.encuesta.resultado_preliminar).reduce((sum, votos) => sum + votos, 0)
+  return Object.values(props.encuesta.resultado_preliminar).reduce((sum, opcion) => sum + (opcion.votos || 0), 0)
 })
 
 const encuestaExpirada = computed(() => {
