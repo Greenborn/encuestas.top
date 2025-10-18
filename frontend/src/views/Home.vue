@@ -88,7 +88,7 @@ const navigateTo = (path) => {
                 <div class="feature-icon">🔒</div>
                 <h3 class="feature-title">Privacidad</h3>
                 <p class="feature-text">
-                  No compartimos información sobre tus preferencias de voto. El email solo se utiliza para validar tu usuario y asegurar que cada persona vote una sola vez <small>(en la medida de lo posible).</small>
+                  No compartimos información sobre tus preferencias de voto. El email solo se utiliza para validar tu usuario y asegurar que cada persona vote una sola vez <small>(en la medida de lo posible).</small> y el nombre no se almacena en la base de datos del sistema de votación 
                 </p>
               </div>
           </div>
