@@ -1,6 +1,7 @@
 <script setup>
 
 import { ref, onMounted } from 'vue'
+import ConfirmarVotoModal from './ConfirmarVotoModal.vue'
 import encuestasService from '@/services/encuestasService'
 import sessionModule from '@/session/sessionModule'
 import { useRouter } from 'vue-router'
@@ -17,10 +18,12 @@ const emit = defineEmits(['close', 'voto-exitoso'])
 
 const opciones = ref([])
 const opcionSeleccionada = ref(null)
+
 const loading = ref(false)
 const loadingOpciones = ref(true)
 const error = ref(null)
 const router = useRouter()
+const showConfirmarModal = ref(false)
 
 const cargarOpciones = async () => {
   try {
@@ -38,32 +41,37 @@ const cargarOpciones = async () => {
 }
 
 
-const handleVotar = async () => {
+
+
+const handleVotar = () => {
   if (!opcionSeleccionada.value) {
     alert('Por favor, selecciona una opción')
     return
   }
-
-  // Si no hay sesión activa, guardar voto pendiente y redirigir a login
+  // Si no hay sesión, guardar voto pendiente y redirigir a login, sin mostrar modal de confirmación
   if (!sessionModule.isAuthenticated()) {
-    // Guardar en localStorage la encuesta y opción elegida
     localStorage.setItem('encuestas_top_voto_pendiente', JSON.stringify({
       id_encuesta: props.encuesta.id_encuesta,
       id_opcion: opcionSeleccionada.value
     }))
-    // Redirigir a login
+    localStorage.setItem('encuestas_top_return_id', props.encuesta.id_encuesta)
+    // Guardar la URL de retorno exacta del detalle de la encuesta
+    localStorage.setItem('encuestas_top_return_url', `/encuestas/${props.encuesta.id_encuesta}`)
     router.push('/login')
     return
   }
+  // Si hay sesión, mostrar modal de confirmación
+  showConfirmarModal.value = true
+}
 
+const confirmarVoto = async () => {
+  showConfirmarModal.value = false
   try {
     loading.value = true
     error.value = null
-
     await encuestasService.votar(props.encuesta.id_encuesta, {
       id_opcion: opcionSeleccionada.value
     })
-
     // Limpiar voto pendiente si existía
     localStorage.removeItem('encuestas_top_voto_pendiente')
     emit('voto-exitoso')
@@ -75,6 +83,12 @@ const handleVotar = async () => {
   }
 }
 
+const cancelarVoto = () => {
+  showConfirmarModal.value = false
+  // Redirigir a la encuesta sin votar
+  router.push(`/encuestas/${props.encuesta.id_encuesta}`)
+}
+
 const handleClose = () => {
   emit('close')
 }
@@ -82,20 +96,6 @@ const handleClose = () => {
 
 onMounted(() => {
   cargarOpciones()
-
-  // Si hay sesión activa y hay voto pendiente, emitirlo automáticamente
-  if (sessionModule.isAuthenticated()) {
-    const votoPendiente = localStorage.getItem('encuestas_top_voto_pendiente')
-    if (votoPendiente) {
-      try {
-        const { id_encuesta, id_opcion } = JSON.parse(votoPendiente)
-        if (id_encuesta == props.encuesta.id_encuesta && id_opcion) {
-          opcionSeleccionada.value = id_opcion
-          handleVotar()
-        }
-      } catch {}
-    }
-  }
 })
 </script>
 
@@ -161,6 +161,13 @@ onMounted(() => {
             {{ loading ? 'Votando...' : '✅ Confirmar Voto' }}
           </button>
         </div>
+
+    <ConfirmarVotoModal
+      v-if="showConfirmarModal && opcionSeleccionada"
+      :opcion="opciones.find(o => o.id_opcion === opcionSeleccionada)"
+      @confirm="confirmarVoto"
+      @cancel="cancelarVoto"
+    />
       </div>
     </div>
   </div>

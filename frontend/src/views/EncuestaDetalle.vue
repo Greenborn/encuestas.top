@@ -7,6 +7,7 @@ import { formatDate, isExpired } from '@/utils/helpers'
 import GraficoResultados from '@/components/GraficoResultados.vue'
 import CompartirModal from '@/components/CompartirModal.vue'
 import VotarModal from '@/components/VotarModal.vue'
+import ConfirmarVotoModal from '@/components/ConfirmarVotoModal.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -20,6 +21,8 @@ const showCompartirModal = ref(false)
 const showVotarModal = ref(false)
 const puedeVotar = ref(false)
 const votoPendienteProcesado = ref(false)
+const showConfirmarVotoModal = ref(false)
+const opcionPendiente = ref(null)
 
 const cargarDatos = async () => {
   try {
@@ -61,27 +64,57 @@ const handleVolver = () => {
 onMounted(() => {
   cargarDatos()
 
-  // Si hay sesión y hay voto pendiente, procesar voto automáticamente
+  // Mostrar modal de confirmación de voto solo si:
+  // - Hay sesión
+  // - Hay voto pendiente y return_id en localStorage
+  // - El return_id coincide con la encuesta actual
+  // - No se ha procesado aún
   const votoPendiente = localStorage.getItem('encuestas_top_voto_pendiente')
-  if (sessionModule.isAuthenticated() && votoPendiente && !votoPendienteProcesado.value) {
+  const returnId = localStorage.getItem('encuestas_top_return_id')
+  if (
+    sessionModule.isAuthenticated() &&
+    votoPendiente &&
+    returnId &&
+    !votoPendienteProcesado.value &&
+    String(returnId) === String(route.params.id)
+  ) {
     try {
       const { id_encuesta, id_opcion } = JSON.parse(votoPendiente)
-      // Solo procesar si corresponde a esta encuesta
-      if (id_encuesta == route.params.id && id_opcion) {
-        votoPendienteProcesado.value = true
-        // Realizar petición de voto y actualizar resultados
-        encuestasService.votar(id_encuesta, { id_opcion })
-          .then(() => {
-            localStorage.removeItem('encuestas_top_voto_pendiente')
-            cargarDatos()
-          })
-          .catch(() => {
-            // Si falla, no borrar el voto pendiente para reintentar
-          })
+      if (id_encuesta == route.params.id && id_opcion && encuesta.value && encuesta.value.opciones) {
+        const opcion = encuesta.value.opciones.find(o => o.id_opcion == id_opcion)
+        if (opcion) {
+          opcionPendiente.value = opcion
+          showConfirmarVotoModal.value = true
+        }
       }
     } catch {}
   }
 })
+
+const confirmarVotoPendiente = async () => {
+  const votoPendiente = localStorage.getItem('encuestas_top_voto_pendiente')
+  if (!votoPendiente) return
+  try {
+    const { id_encuesta, id_opcion } = JSON.parse(votoPendiente)
+    votoPendienteProcesado.value = true
+    await encuestasService.votar(id_encuesta, { id_opcion })
+    localStorage.removeItem('encuestas_top_voto_pendiente')
+    localStorage.removeItem('encuestas_top_return_id')
+    showConfirmarVotoModal.value = false
+    cargarDatos()
+  } catch {
+    // Si falla, no borrar el voto pendiente para reintentar
+    showConfirmarVotoModal.value = false
+  }
+}
+
+const cancelarVotoPendiente = () => {
+  localStorage.removeItem('encuestas_top_voto_pendiente')
+  localStorage.removeItem('encuestas_top_return_id')
+  showConfirmarVotoModal.value = false
+  // Redirigir a la encuesta
+  router.replace(`/encuestas/${route.params.id}`)
+}
 </script>
 
 <template>
@@ -184,6 +217,13 @@ onMounted(() => {
       :encuesta="encuesta"
       @close="showVotarModal = false"
       @voto-exitoso="handleVotoExitoso"
+    />
+
+    <ConfirmarVotoModal
+      v-if="showConfirmarVotoModal && opcionPendiente"
+      :opcion="opcionPendiente"
+      @confirm="confirmarVotoPendiente"
+      @cancel="cancelarVotoPendiente"
     />
   </div>
 </template>

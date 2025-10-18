@@ -45,8 +45,13 @@ onMounted(async () => {
       });
       success.value = true;
       userName.value = result.data.user.name;
-      const redirectUrl = localStorage.getItem('app_mascota_url_login_redirect');
+      // Redirección priorizando encuestas_top_return_url
+      let redirectUrl = localStorage.getItem('encuestas_top_return_url');
+      if (!redirectUrl || !redirectUrl.startsWith('/')) {
+        redirectUrl = localStorage.getItem('app_mascota_url_login_redirect');
+      }
       if (redirectUrl && redirectUrl.startsWith('/')) {
+        localStorage.removeItem('encuestas_top_return_url');
         router.replace(redirectUrl);
       } else {
         router.replace('/');
