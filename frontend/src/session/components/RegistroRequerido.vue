@@ -16,10 +16,8 @@
         <div class="info-section">
           <h3 class="info-titulo">¿Por qué necesito registrarme?</h3>
           <ul class="info-lista">
-            <li>✅ Reportar mascotas perdidas o avistadas</li>
-            <li>✅ Crear y gestionar tus publicaciones</li>
-            <li>✅ Mejorar la seguridad y experiencia de la comunidad</li>
-            <li>✅ Acceder a funciones exclusivas para miembros</li>
+            <li>✅ Crear nuevas encuestas</li>
+            <li>✅ Votar en encuestas activas</li>
           </ul>
         </div>
         <div class="links-section">
