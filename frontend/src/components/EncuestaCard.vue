@@ -2,6 +2,9 @@
 import { computed } from 'vue'
 import { formatDate, isExpired } from '@/utils/helpers'
 
+
+import sessionModule from '@/session/sessionModule'
+
 const props = defineProps({
   encuesta: {
     type: Object,
@@ -32,7 +35,13 @@ const encuestaExpirada = computed(() => {
   return isExpired(props.encuesta.fecha_finalizacion)
 })
 
+
 const puedeVotar = computed(() => {
+  // Si no hay sesión activa, permitir votar (mostrar botón)
+  if (!sessionModule.isAuthenticated()) {
+    return !encuestaExpirada.value
+  }
+  // Si hay sesión, usar la lógica original
   return props.encuesta.puede_votar && !encuestaExpirada.value
 })
 

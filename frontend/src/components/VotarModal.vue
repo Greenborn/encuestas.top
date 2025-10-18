@@ -1,6 +1,9 @@
 <script setup>
+
 import { ref, onMounted } from 'vue'
 import encuestasService from '@/services/encuestasService'
+import sessionModule from '@/session/sessionModule'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   encuesta: {
@@ -11,11 +14,13 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'voto-exitoso'])
 
+
 const opciones = ref([])
 const opcionSeleccionada = ref(null)
 const loading = ref(false)
 const loadingOpciones = ref(true)
 const error = ref(null)
+const router = useRouter()
 
 const cargarOpciones = async () => {
   try {
@@ -32,9 +37,22 @@ const cargarOpciones = async () => {
   }
 }
 
+
 const handleVotar = async () => {
   if (!opcionSeleccionada.value) {
     alert('Por favor, selecciona una opción')
+    return
+  }
+
+  // Si no hay sesión activa, guardar voto pendiente y redirigir a login
+  if (!sessionModule.isAuthenticated()) {
+    // Guardar en localStorage la encuesta y opción elegida
+    localStorage.setItem('encuestas_top_voto_pendiente', JSON.stringify({
+      id_encuesta: props.encuesta.id_encuesta,
+      id_opcion: opcionSeleccionada.value
+    }))
+    // Redirigir a login
+    router.push('/login')
     return
   }
 
@@ -46,6 +64,8 @@ const handleVotar = async () => {
       id_opcion: opcionSeleccionada.value
     })
 
+    // Limpiar voto pendiente si existía
+    localStorage.removeItem('encuestas_top_voto_pendiente')
     emit('voto-exitoso')
   } catch (err) {
     error.value = err.response?.data?.error || 'Error al registrar el voto. Por favor, intenta nuevamente.'
@@ -59,8 +79,23 @@ const handleClose = () => {
   emit('close')
 }
 
+
 onMounted(() => {
   cargarOpciones()
+
+  // Si hay sesión activa y hay voto pendiente, emitirlo automáticamente
+  if (sessionModule.isAuthenticated()) {
+    const votoPendiente = localStorage.getItem('encuestas_top_voto_pendiente')
+    if (votoPendiente) {
+      try {
+        const { id_encuesta, id_opcion } = JSON.parse(votoPendiente)
+        if (id_encuesta == props.encuesta.id_encuesta && id_opcion) {
+          opcionSeleccionada.value = id_opcion
+          handleVotar()
+        }
+      } catch {}
+    }
+  }
 })
 </script>
 
