@@ -11,9 +11,21 @@ const props = defineProps({
 
 const emit = defineEmits(['ver-detalle', 'votar'])
 
+// Computed para parsear resultado_preliminar si viene como string
+const resultadoPreliminarParsed = computed(() => {
+  const raw = props.encuesta.resultado_preliminar
+  if (typeof raw === 'string') {
+    try {
+      return JSON.parse(raw)
+    } catch {
+      return {}
+    }
+  }
+  return raw || {}
+})
+
 const totalVotos = computed(() => {
-  if (!props.encuesta.resultado_preliminar) return 0
-  return Object.values(props.encuesta.resultado_preliminar).reduce((sum, opcion) => sum + (opcion.votos || 0), 0)
+  return Object.values(resultadoPreliminarParsed.value).reduce((sum, opcion) => sum + (opcion.votos || 0), 0)
 })
 
 const encuestaExpirada = computed(() => {
@@ -68,11 +80,18 @@ const handleVotar = () => {
           <div class="resultado-info">
             <span class="resultado-nombre" :style="{ color: opcion.color }">{{ opcion.texto_opcion }}</span>
             <span class="resultado-votos">
-              {{ encuesta.resultado_preliminar && encuesta.resultado_preliminar[opcion.id_opcion]?.votos !== undefined
-                ? encuesta.resultado_preliminar[opcion.id_opcion].votos
+              {{ resultadoPreliminarParsed && resultadoPreliminarParsed[String(opcion.id_opcion)]?.votos !== undefined
+                ? resultadoPreliminarParsed[String(opcion.id_opcion)].votos
                 : 0
               }} votos
-              <span v-if="encuesta.resultado_preliminar && encuesta.resultado_preliminar[opcion.id_opcion]"> ({{ encuesta.resultado_preliminar[opcion.id_opcion].porcentaje }}%)</span>
+              <span>
+                (
+                {{ resultadoPreliminarParsed && resultadoPreliminarParsed[String(opcion.id_opcion)]?.porcentaje !== undefined
+                  ? resultadoPreliminarParsed[String(opcion.id_opcion)].porcentaje
+                  : '0.00'
+                }}%
+                )
+              </span>
             </span>
           </div>
           <div class="progress">
@@ -80,8 +99,8 @@ const handleVotar = () => {
               class="progress-bar" 
               role="progressbar" 
               :style="{
-                width: encuesta.resultado_preliminar && encuesta.resultado_preliminar[opcion.id_opcion]
-                  ? `${encuesta.resultado_preliminar[opcion.id_opcion].porcentaje}%`
+                width: resultadoPreliminarParsed.value && resultadoPreliminarParsed.value[String(opcion.id_opcion)]?.porcentaje !== undefined
+                  ? `${resultadoPreliminarParsed.value[String(opcion.id_opcion)].porcentaje}%`
                   : '0%',
                 background: opcion.color
               }"
