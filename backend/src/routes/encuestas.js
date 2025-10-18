@@ -20,7 +20,9 @@ router.get('/',
   EncuestasController.listarEncuestas
 );
 
+const { authSessionMiddlewareOpcional } = require('../middleware/authSessionMiddleware');
 router.get('/:id', 
+  authSessionMiddlewareOpcional,
   EncuestasController.obtenerEncuesta
 );
 

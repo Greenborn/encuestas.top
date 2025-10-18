@@ -26,7 +26,7 @@ const cargarDatos = async () => {
     const id = route.params.id
     const encuestaData = await encuestasService.getEncuesta(id)
     encuesta.value = encuestaData.data
-    puedeVotar.value = encuestaData.data?.puede_votar && !isExpired(encuestaData.data?.fecha_finalizacion)
+    puedeVotar.value = !isExpired(encuestaData.data?.ya_voto)
   } catch (err) {
     error.value = 'Error al cargar la encuesta. Por favor, intenta nuevamente.'
     console.error('Error cargando encuesta:', err)
