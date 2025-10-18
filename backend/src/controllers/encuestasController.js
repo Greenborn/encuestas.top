@@ -48,7 +48,7 @@ class EncuestasController {
         await trx.commit();
 
         // Obtener la encuesta completa con opciones
-        const encuestaCompleta = await this.obtenerEncuestaCompleta(id_encuesta);
+  const encuestaCompleta = await EncuestasController.obtenerEncuestaCompleta(id_encuesta);
 
         res.status(201).json({
           success: true,
@@ -170,7 +170,7 @@ class EncuestasController {
       const { id } = req.params;
       const userId = req.user?.id;
 
-      const encuesta = await this.obtenerEncuestaCompleta(id);
+  const encuesta = await EncuestasController.obtenerEncuestaCompleta(id);
 
       if (!encuesta) {
         return res.status(404).json({
