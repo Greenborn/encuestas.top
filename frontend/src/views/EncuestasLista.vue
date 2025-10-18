@@ -29,8 +29,8 @@ const cargarEncuestas = async () => {
   try {
     loading.value = true
     error.value = null
-    const data = await encuestasService.getEncuestas()
-    encuestas.value = data
+  const data = await encuestasService.getEncuestas()
+  encuestas.value = data.data.encuestas
   } catch (err) {
     error.value = 'Error al cargar las encuestas. Por favor, intenta nuevamente.'
     console.error('Error cargando encuestas:', err)
