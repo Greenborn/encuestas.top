@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Permitir a Facebook y otros bots acceder a todo
+User-agent: facebookexternalhit
+Allow: /
+User-agent: Facebot
+Allow: /
