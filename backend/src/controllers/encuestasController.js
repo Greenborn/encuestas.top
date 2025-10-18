@@ -101,7 +101,9 @@ class EncuestasController {
 
       // Obtener total de registros
       const totalQuery = query.clone();
-      const total = await totalQuery.count('* as count').first();
+    const total = await totalQuery.count('* as count').first();
+    // Asegurar que total.count existe y es número
+    const totalCount = total && (typeof total.count === 'string' ? Number(total.count) : total.count) || 0;
 
       // Aplicar paginación
       const encuestas = await query
@@ -143,8 +145,8 @@ class EncuestasController {
           pagination: {
             page: parseInt(page),
             limit: parseInt(limit),
-            total: total.count,
-            pages: Math.ceil(total.count / limit)
+            total: totalCount,
+            pages: Math.ceil(totalCount / limit)
           }
         }
       });

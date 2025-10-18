@@ -38,6 +38,20 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// Middleware para asegurar headers CORS en todas las respuestas
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || 'http://localhost:5177');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With');
+  next();
+});
+
+// Responder correctamente a las solicitudes OPTIONS (preflight)
+app.options('*', (req, res) => {
+  res.sendStatus(200);
+});
+
 // Rate limiting general
 app.use(generalLimiter);
 
