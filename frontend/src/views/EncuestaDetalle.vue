@@ -63,33 +63,36 @@ const handleVolver = () => {
 
 onMounted(() => {
   cargarDatos()
-
-  // Mostrar modal de confirmación de voto solo si:
-  // - Hay sesión
-  // - Hay voto pendiente y return_id en localStorage
-  // - El return_id coincide con la encuesta actual
-  // - No se ha procesado aún
-  const votoPendiente = localStorage.getItem('encuestas_top_voto_pendiente')
-  const returnId = localStorage.getItem('encuestas_top_return_id')
-  if (
-    sessionModule.isAuthenticated() &&
-    votoPendiente &&
-    returnId &&
-    !votoPendienteProcesado.value &&
-    String(returnId) === String(route.params.id)
-  ) {
-    try {
-      const { id_encuesta, id_opcion } = JSON.parse(votoPendiente)
-      if (id_encuesta == route.params.id && id_opcion && encuesta.value && encuesta.value.opciones) {
-        const opcion = encuesta.value.opciones.find(o => o.id_opcion == id_opcion)
-        if (opcion) {
-          opcionPendiente.value = opcion
-          showConfirmarVotoModal.value = true
-        }
-      }
-    } catch {}
-  }
 })
+
+// Mostrar modal de confirmación de voto tras login cuando encuesta y opciones estén listas
+watch(
+  [() => encuesta.value, () => encuesta.value && encuesta.value.opciones],
+  ([enc, opciones]) => {
+    const votoPendiente = localStorage.getItem('encuestas_top_voto_pendiente')
+    const returnId = localStorage.getItem('encuestas_top_return_id')
+    if (
+      sessionModule.isAuthenticated() &&
+      votoPendiente &&
+      returnId &&
+      !votoPendienteProcesado.value &&
+      String(returnId) === String(route.params.id) &&
+      enc && enc.opciones && enc.opciones.length > 0
+    ) {
+      try {
+        const { id_encuesta, id_opcion } = JSON.parse(votoPendiente)
+        if (id_encuesta == route.params.id && id_opcion) {
+          const opcion = enc.opciones.find(o => o.id_opcion == id_opcion)
+          if (opcion) {
+            opcionPendiente.value = opcion
+            showConfirmarVotoModal.value = true
+          }
+        }
+      } catch {}
+    }
+  },
+  { immediate: true }
+)
 
 const confirmarVotoPendiente = async () => {
   const votoPendiente = localStorage.getItem('encuestas_top_voto_pendiente')
