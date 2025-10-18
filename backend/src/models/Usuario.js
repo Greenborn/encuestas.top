@@ -8,7 +8,7 @@ class Usuario {
     datosUsuario.actualizado_el = now;
     // Asegurar que 'nombre' esté presente
     if (!datosUsuario.nombre) {
-      datosUsuario.nombre = datosUsuario.apodo || datosUsuario.email || 'Sin Nombre';
+      datosUsuario.nombre = datosUsuario.apodo || 'Sin Nombre';
     }
     const [id] = await db('usuario').insert(datosUsuario);
     return this.obtenerPorId(id);
@@ -20,11 +20,7 @@ class Usuario {
       .first();
   }
 
-  static async obtenerPorEmail(email) {
-    return await db('usuario')
-      .where({ email })
-      .first();
-  }
+
 
   static async obtenerTodos() {
     return await db('usuario').select('*');

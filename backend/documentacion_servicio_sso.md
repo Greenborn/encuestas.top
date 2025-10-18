@@ -445,7 +445,6 @@ Endpoint de error (definido en FAILURE_REDIRECT_URL).
 |-------|------|-------------|
 | id | INT PK | ID único |
 | google_id | VARCHAR(255) | ID de Google |
-| email | VARCHAR(255) | Email (unique) |
 | name | VARCHAR(255) | Nombre completo |
 | last_unique_id | VARCHAR(255) | Último unique_id |
 | google_access_token | TEXT | Token encriptado |

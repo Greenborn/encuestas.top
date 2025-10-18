@@ -162,7 +162,6 @@ backend/
 ### Tabla: usuario
 - `id_usuario` (VARCHAR, PK)
 - `nombre` (VARCHAR)
-- `email` (VARCHAR, UNIQUE)
 - `password_hash` (VARCHAR)
 - `fecha_registro` (TIMESTAMP)
 

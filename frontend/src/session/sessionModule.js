@@ -62,7 +62,7 @@ function getSessionData() {
   let usuario_id = null;
   try {
     if (usuario) {
-      usuario_id = usuario.id || usuario.usuario_id || usuario.email || null;
+      usuario_id = usuario.id || usuario.usuario_id || null;
     }
   } catch {}
   return {

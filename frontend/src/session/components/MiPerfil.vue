@@ -10,15 +10,8 @@
           </div>
         </div>
         <div v-else>
-          <p class="card-text">
-            <strong>Nombre:</strong> {{ usuario.name || 'No disponible' }}
-          </p>
-          <p class="card-text">
-            <strong>Email:</strong> {{ usuario.email || 'No disponible' }}
-          </p>
-          <p class="card-text">
-            <strong>Teléfono:</strong> {{ usuario.telefono || 'No disponible' }}
-          </p>
+          
+          
         </div>
       </div>
     </div>
@@ -29,8 +22,6 @@ import { ref, onMounted } from 'vue'
 import sessionModule from '../../session/sessionModule'
 const usuario = ref({
   nombre: 'Usuario Demo',
-  email: 'usuario@ejemplo.com',
-  telefono: '+54 11 1234-5678'
 })
 const loading = ref(false)
 const cargarPerfil = async () => {

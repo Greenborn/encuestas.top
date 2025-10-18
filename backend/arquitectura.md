@@ -14,7 +14,6 @@ A continuación se definen las tablas principales para la gestión de encuestas 
 ### Tabla: usuario
 - id_usuario (INT, PK, AI)
 - nombre (VARCHAR)
-- email (VARCHAR, único)
 - password_hash (VARCHAR)
 - fecha_registro (DATETIME)
 
