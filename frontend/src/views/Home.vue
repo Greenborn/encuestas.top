@@ -20,6 +20,7 @@ const navigateTo = (path) => {
             <p class="hero-subtitle">
               La forma más divertida de crear encuestas, votar sobre diferentes temas 
               y compartir tu opinión con el mundo.
+              <br><br><small class="greenborn-credit">Un desarrollo de <a href="https://greenborn.com.ar" target="_blank" class="greenborn-link">Greenborn Software</a></small>
             </p>
             <div class="hero-buttons">
               <button 
@@ -271,4 +272,20 @@ const navigateTo = (path) => {
     width: 100%;
   }
 }
+
+
+/* Estilos para el crédito de Greenborn */
+.greenborn-credit {
+  font-size: 0.85em;
+}
+.greenborn-link {
+  color: #5fee0c;
+  text-decoration: underline;
+  font-size: 0.95em;
+}
+/* Opcional: color más oscuro al pasar el mouse */
+.greenborn-link:hover {
+  color: #dfc21c;
+}
 </style>
+
