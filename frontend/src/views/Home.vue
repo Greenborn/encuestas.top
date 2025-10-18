@@ -82,6 +82,15 @@ const navigateTo = (path) => {
                 Generá debate y conocé diferentes opiniones.
               </p>
             </div>
+            </div>
+            <div class="col-md-4">
+              <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3 class="feature-title">Privacidad</h3>
+                <p class="feature-text">
+                  No compartimos información sobre tus preferencias de voto. El email solo se utiliza para validar tu usuario y asegurar que cada persona vote una sola vez <small>(en la medida de lo posible).</small>
+                </p>
+              </div>
           </div>
         </div>
       </div>
