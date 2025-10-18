@@ -89,7 +89,7 @@ onUnmounted(() => {
     <div class="container">
       <router-link to="/" class="navbar-brand d-flex align-items-center" @click="closeMobileMenu">
         <span class="brand-icon">📊</span>
-        <span class="brand-text">Encuestas<span class="brand-dot">.top</span></span>
+        <span class="brand-text">Encuesta<span class="brand-dot">.top</span></span>
       </router-link>
       
       <button 
