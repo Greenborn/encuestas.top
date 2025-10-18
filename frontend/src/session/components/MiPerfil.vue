@@ -20,9 +20,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import sessionModule from '../../session/sessionModule'
-const usuario = ref({
-  nombre: 'Usuario Demo',
-})
+const usuario = ref({})
 const loading = ref(false)
 const cargarPerfil = async () => {
   loading.value = true;

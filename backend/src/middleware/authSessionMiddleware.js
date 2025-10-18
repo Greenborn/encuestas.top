@@ -35,8 +35,7 @@ async function authSessionMiddleware(req, res, next) {
       if (!usuarioDb) {
         // Crear usuario si no existe
         await Usuario.crear({
-          id_usuario: usuarioSSO.id,
-          apodo: usuarioSSO.name
+          id_usuario: usuarioSSO.id
         });
       }
       next();
@@ -77,8 +76,7 @@ async function authSessionMiddlewareOpcional(req, res, next) {
       let usuarioDb = await Usuario.obtenerPorId(usuarioSSO.id);
       if (!usuarioDb) {
         await Usuario.crear({
-          id_usuario: usuarioSSO.id,
-          apodo: usuarioSSO.name
+          id_usuario: usuarioSSO.id
         });
       }
     }

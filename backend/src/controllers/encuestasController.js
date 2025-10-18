@@ -135,9 +135,8 @@ class EncuestasController {
             .orderBy('id_opcion');
 
           // Eliminar nombre_creador y email_creador si existen
-          const { nombre_creador, email_creador, ...encuestaSinCreador } = encuesta;
           return {
-            ...encuestaSinCreador,
+            ...encuesta,
             puede_votar: puedeVotar,
             ya_voto: yaVoto,
             es_propietario: userId === encuesta.id_usuario,
@@ -213,11 +212,10 @@ class EncuestasController {
       }
 
       // Eliminar nombre_creador y email_creador si existen
-      const { nombre_creador, email_creador, ...encuestaSinCreador } = encuesta;
       res.json({
         success: true,
         data: {
-          ...encuestaSinCreador,
+          ...encuesta,
           puede_votar: puedeVotar,
           ya_voto: yaVoto,
           es_propietario: esPropietario

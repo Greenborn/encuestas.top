@@ -153,7 +153,7 @@ onUnmounted(() => {
                 <span v-if="userPhoto" class="profile-img me-2">
                   <img :src="userPhoto" alt="Foto de perfil" />
                 </span>
-                {{ userData?.nombre || userData?.name || 'Usuario' }}
+                {{ 'Usuario' }}
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li>

@@ -6,12 +6,9 @@ class Usuario {
     const now = moment().tz('America/Argentina/Buenos_Aires').format('YYYY-MM-DD HH:mm:ss');
     datosUsuario.creado_el = now;
     datosUsuario.actualizado_el = now;
-    // Asegurar que 'nombre' esté presente
-    if (!datosUsuario.nombre) {
-      datosUsuario.nombre = datosUsuario.apodo || 'Sin Nombre';
-    }
-    const [id] = await db('usuario').insert(datosUsuario);
-    return this.obtenerPorId(id);
+    // Ya no se requiere nombre ni apodo
+  const [id] = await db('usuario').insert(datosUsuario);
+  return this.obtenerPorId(id);
   }
 
   static async obtenerPorId(id) {

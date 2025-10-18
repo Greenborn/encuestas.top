@@ -133,11 +133,7 @@ class VotosController {
 
       // Verificar que la encuesta existe
       const encuesta = await db('encuesta')
-        .select(
-          'encuesta.*',
-          'usuario.nombre as nombre_creador'
-        )
-        .leftJoin('usuario', 'encuesta.id_usuario', 'usuario.id_usuario')
+        .select('encuesta.*')
         .where('encuesta.id_encuesta', id)
         .first();
 
@@ -213,7 +209,7 @@ class VotosController {
             descripcion: encuesta.descripcion,
             fecha_creacion: encuesta.fecha_creacion,
             fecha_finalizacion: encuesta.fecha_finalizacion,
-            nombre_creador: encuesta.nombre_creador,
+            // nombre_creador eliminado
             finalizada: encuesta.fecha_finalizacion && new Date(encuesta.fecha_finalizacion) <= new Date()
           },
           resultados: {
