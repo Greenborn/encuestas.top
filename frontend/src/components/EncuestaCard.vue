@@ -59,21 +59,32 @@ const handleVotar = () => {
         </div>
       </div>
 
-      <div class="resultados-preview" v-if="encuesta.resultado_preliminar">
+      <div class="resultados-preview" v-if="encuesta.opciones && encuesta.opciones.length">
         <div 
-          v-for="(votos, opcionId) in encuesta.resultado_preliminar" 
-          :key="opcionId"
+          v-for="opcion in encuesta.opciones" 
+          :key="opcion.id_opcion"
           class="resultado-barra"
         >
           <div class="resultado-info">
-            <span class="resultado-nombre">Opción {{ opcionId }}</span>
-            <span class="resultado-votos">{{ votos }}</span>
+            <span class="resultado-nombre" :style="{ color: opcion.color }">{{ opcion.texto_opcion }}</span>
+            <span class="resultado-votos">
+              {{ encuesta.resultado_preliminar && encuesta.resultado_preliminar[opcion.id_opcion]?.votos !== undefined
+                ? encuesta.resultado_preliminar[opcion.id_opcion].votos
+                : 0
+              }} votos
+              <span v-if="encuesta.resultado_preliminar && encuesta.resultado_preliminar[opcion.id_opcion]"> ({{ encuesta.resultado_preliminar[opcion.id_opcion].porcentaje }}%)</span>
+            </span>
           </div>
           <div class="progress">
             <div 
               class="progress-bar" 
               role="progressbar" 
-              :style="{ width: totalVotos > 0 ? `${(votos / totalVotos) * 100}%` : '0%' }"
+              :style="{
+                width: encuesta.resultado_preliminar && encuesta.resultado_preliminar[opcion.id_opcion]
+                  ? `${encuesta.resultado_preliminar[opcion.id_opcion].porcentaje}%`
+                  : '0%',
+                background: opcion.color
+              }"
             ></div>
           </div>
         </div>
@@ -158,6 +169,7 @@ const handleVotar = () => {
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
