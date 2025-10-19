@@ -16,8 +16,7 @@ const copiadoExitoso = ref(false)
 const descargandoImagen = ref(false)
 
 const urlEncuesta = computed(() => {
-  const baseUrl = window.location.origin + window.location.pathname
-  return `${baseUrl}#/encuestas/${props.encuesta.id_encuesta}`
+  return `https://social.encuesta.top/encuesta/${props.encuesta.id_encuesta}`
 })
 
 const handleCopiarEnlace = async () => {
