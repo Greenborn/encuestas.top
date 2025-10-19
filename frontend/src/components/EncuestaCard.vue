@@ -145,9 +145,10 @@ const handleVotar = () => {
 </template>
 
 <style scoped>
+
 .encuesta-card {
   background: white;
-  border-radius: 15px;
+  border-radius: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: all 0.3s ease;
@@ -228,10 +229,11 @@ const handleVotar = () => {
   gap: 0.75rem;
 }
 
+
 .resultado-barra {
   background: #f8f9fa;
   padding: 0.75rem;
-  border-radius: 8px;
+  border-radius: 0;
 }
 
 .resultado-info {
@@ -251,10 +253,11 @@ const handleVotar = () => {
   font-weight: 700;
 }
 
+
 .progress {
   height: 8px;
   background-color: #e9ecef;
-  border-radius: 4px;
+  border-radius: 0;
 }
 
 .progress-bar {
