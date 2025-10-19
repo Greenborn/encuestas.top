@@ -39,8 +39,8 @@ router.get('/:id_encuesta', async (req, res) => {
   <meta name=\"robots\" content=\"index, follow\" />
 </head>
 <body>
-  <h1>${encuesta.titulo}</h1>
-  <p>${encuesta.descripcion}</p>
+  
+    <iframe src="${process.env.REDIRECT_BASE_URL || 'https://encuesta.top'}/#/encuestas/${encuesta.id_encuesta}" width="100%" height="600" style="border:none;overflow:auto;"></iframe>
 </body>
 </html>`);
   } catch (err) {
