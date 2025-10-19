@@ -233,7 +233,7 @@ const cancelarVotoPendiente = () => {
 
 <style scoped>
 .encuesta-detalle-container {
-  padding: 2rem 0 4rem;
+  padding: 0rem 0 4rem;
   min-height: 100vh;
   background-color: #f8f9fa;
 }
@@ -267,6 +267,21 @@ const cancelarVotoPendiente = () => {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .encuesta-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+  .encuesta-meta .badge {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    white-space: normal;
+    word-break: break-word;
+  }
 }
 
 .encuesta-meta .badge {
