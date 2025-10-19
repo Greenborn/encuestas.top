@@ -105,7 +105,7 @@ onMounted(() => {
       <div class="modal-content">
         <div class="modal-header">
           <h3 class="modal-title">🗳️ Votar en: {{ encuesta.titulo }}</h3>
-          <button type="button" class="btn-close" @click="handleClose"></button>
+          <button type="button" class="btn-close" @click="handleClose">&times;</button>
         </div>
 
         <div class="modal-body">
@@ -228,10 +228,18 @@ onMounted(() => {
 }
 
 .btn-close {
-  background: white;
-  opacity: 1;
+  background: transparent;
+  color: #fff;
+  font-size: 1.5rem;
+  border: none;
   border-radius: 50%;
-  padding: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: background 0.2s;
+}
+.btn-close:hover {
+  background: rgba(255,255,255,0.2);
 }
 
 .modal-body {

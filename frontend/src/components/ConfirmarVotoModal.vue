@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h3 class="modal-title">Confirmar Voto</h3>
-          <button type="button" class="btn-close" @click="onCancel"></button>
+          <button type="button" class="btn-close" @click="onCancel">&times;</button>
         </div>
         <div class="modal-body">
           <p>¿Estás seguro que quieres votar por la opción:</p>
@@ -51,7 +51,18 @@ const onCancel = () => emit('cancel')
   display: flex; justify-content: space-between; align-items: center;
 }
 .btn-close {
-  background: white; border-radius: 50%; padding: 0.3rem 0.6rem;
+  background: transparent;
+  color: #fff;
+  font-size: 1.5rem;
+  border: none;
+  border-radius: 50%;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: background 0.2s;
+}
+.btn-close:hover {
+  background: rgba(255,255,255,0.2);
 }
 .modal-body { padding: 1.5rem; }
 .opcion-seleccionada {
