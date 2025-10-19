@@ -1,5 +1,8 @@
+
 import express from 'express';
 import { getEncuestaById } from '../services/encuestaService.js';
+
+const BASE_URL = process.env.SERVICE_BASE_URL || '';
 
 const router = express.Router();
 
@@ -19,7 +22,7 @@ router.get('/:id_encuesta', async (req, res) => {
   <meta property=\"og:title\" content=\"${encuesta.titulo}\" />
   <meta property=\"og:description\" content=\"${encuesta.descripcion}\" />
   <meta property=\"og:type\" content=\"website\" />
-  <meta property=\"og:url\" content=\"${req.protocol}://${req.get('host')}${req.originalUrl}\" />
+  <meta property=\"og:url\" content=\"${BASE_URL}${req.originalUrl}\" />
   <meta property=\"og:image\" content=\"https://encuesta.top/icon-encuesta.png\" />
   <meta property=\"og:site_name\" content=\"Encuesta.top\" />
   <meta property=\"og:locale\" content=\"es_ES\" />
@@ -27,7 +30,7 @@ router.get('/:id_encuesta', async (req, res) => {
   <meta name=\"twitter:title\" content=\"${encuesta.titulo}\" />
   <meta name=\"twitter:description\" content=\"${encuesta.descripcion}\" />
   <meta name=\"twitter:image\" content=\"https://encuesta.top/icon-encuesta.png\" />
-  <meta name=\"twitter:url\" content=\"${req.protocol}://${req.get('host')}${req.originalUrl}\" />
+  <meta name=\"twitter:url\" content=\"${BASE_URL}${req.originalUrl}\" />
   <meta name=\"description\" content=\"${encuesta.descripcion}\" />
   <meta name=\"keywords\" content=\"encuesta, votación, resultados, preguntas\" />
   <meta itemprop=\"name\" content=\"${encuesta.titulo}\" />

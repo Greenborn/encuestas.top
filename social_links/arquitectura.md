@@ -20,16 +20,18 @@ Se debe usar base de datos de proyecto backend, en principio obteniendo los prop
 - resultado_preliminar (JSON) //json que resume la cantidad de votos para cada opcion
 
 ## Configuraciones
+
 Las configuraciones se definiran en .env
 No olvides agregar .gitignore
 No olvides agregar .env.example
 
-los parametros a configuragar en .env son:
+Los parámetros a configurar en .env son:
 - puerto escucha
 - servidor base de datos
 - nombre base de datos
 - usuario base de datos
 - contraseña usuario base de datos
+- SERVICE_BASE_URL: URL base pública del servicio de social links (por ejemplo, https://social.encuesta.top). Se utiliza para construir las URLs absolutas en los metatags (og:url, twitter:url, etc.)
 
 ## Endpoints
 
@@ -42,7 +44,16 @@ Obtiene los datos de la encuesta y se encarga de definir los opengraph tags
 
 ## Ejemplo de metatags para compartir encuesta
 
+
 Incluye los principales estándares para compatibilidad con Meta (Facebook/Instagram), Google, LinkedIn, Reddit, X (Twitter), etc.
+Las URLs de los metatags se generan dinámicamente usando la variable de entorno SERVICE_BASE_URL, por ejemplo:
+
+```js
+const BASE_URL = process.env.SERVICE_BASE_URL;
+// ...
+<meta property="og:url" content={`${BASE_URL}/encuesta/123`} />
+<meta name="twitter:url" content={`${BASE_URL}/encuesta/123`} />
+```
 
 ```html
 <!-- OpenGraph (Meta, Facebook, LinkedIn, Reddit) -->
