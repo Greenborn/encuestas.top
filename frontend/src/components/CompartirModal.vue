@@ -229,7 +229,7 @@ const handleClose = () => {
   font-size: 1.5rem;
   border: none;
   border-radius: 50%;
-  padding: 0.3rem 0.6rem;
+  padding: 0;
   cursor: pointer;
   line-height: 1;
   transition: background 0.2s;
