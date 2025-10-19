@@ -128,7 +128,6 @@ a:hover {
 /* Cards */
 .card {
   border: none;
-  border-radius: 15px;
   box-shadow: var(--sombra-md);
   transition: all var(--transicion-normal);
   overflow: hidden;
