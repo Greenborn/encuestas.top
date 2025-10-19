@@ -240,7 +240,7 @@ const cancelarVotoPendiente = () => {
 
 .encuesta-card {
   background: white;
-  border-radius: 15px;
+  border-radius: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
