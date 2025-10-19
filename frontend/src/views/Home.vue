@@ -150,8 +150,8 @@ const navigateTo = (path) => {
 
 .hero-buttons .btn-primary {
   background-color: white;
-  color: #0057B7;
-  border: none;
+  color: white;
+  border: 2px solid white;
 }
 
 .hero-buttons .btn-primary:hover {
