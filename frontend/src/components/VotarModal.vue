@@ -158,7 +158,7 @@ onMounted(() => {
             :disabled="loading || !opcionSeleccionada || loadingOpciones"
           >
             <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
-            {{ loading ? 'Votando...' : '✅ Confirmar Voto' }}
+            {{ loading ? 'Votando...' : 'Confirmar' }}
           </button>
         </div>
 
@@ -354,13 +354,17 @@ onMounted(() => {
   .modal-body {
     padding: 1.5rem;
   }
-  
+
   .modal-footer {
-    flex-direction: column;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: space-between;
   }
-  
+
   .modal-footer .btn {
-    width: 100%;
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
   }
 }
 </style>

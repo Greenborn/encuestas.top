@@ -75,7 +75,25 @@ const onCancel = () => emit('cancel')
 }
 .texto { font-weight: 600; }
 .modal-footer {
-  display: flex; justify-content: flex-end; gap: 1rem;
-  padding: 1rem 1.5rem; background: #f8f9fa;
+  display: flex;
+  flex-direction: row !important;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: #f8f9fa;
+}
+
+.modal-footer .btn {
+  width: auto !important;
+}
+
+@media (max-width: 576px) {
+  .modal-footer {
+    flex-direction: row !important;
+  }
+  .modal-footer .btn {
+    width: auto !important;
+    min-width: 0;
+  }
 }
 </style>
