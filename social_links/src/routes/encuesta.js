@@ -13,12 +13,14 @@ router.get('/:id_encuesta', async (req, res) => {
     if (!encuesta) {
       return res.status(404).send('Encuesta no encontrada');
     }
-    // Renderizar HTML con metatags
+    // Renderizar HTML con metatags y redirección SEO friendly
+    const redirectUrl = `${process.env.REDIRECT_BASE_URL || 'https://encuesta.top'}/#/encuestas/${encuesta.id_encuesta}`;
     res.send(`<!DOCTYPE html>
 <html lang=\"es\">
 <head>
   <meta charset=\"UTF-8\" />
   <title>${encuesta.titulo}</title>
+  <link rel="icon" type="image/png" href="https://encuesta.top/icon-encuesta.png">
   <meta property=\"og:title\" content=\"${encuesta.titulo}\" />
   <meta property=\"og:description\" content=\"${encuesta.descripcion}\" />
   <meta property=\"og:type\" content=\"website\" />
@@ -37,10 +39,15 @@ router.get('/:id_encuesta', async (req, res) => {
   <meta itemprop=\"description\" content=\"${encuesta.descripcion}\" />
   <meta itemprop=\"image\" content=\"https://encuesta.top/icon-encuesta.png\" />
   <meta name=\"robots\" content=\"index, follow\" />
+  <meta http-equiv=\"refresh\" content=\"0; url=${redirectUrl}\" />
 </head>
 <body>
-  
-    <iframe src="${process.env.REDIRECT_BASE_URL || 'https://encuesta.top'}/#/encuestas/${encuesta.id_encuesta}" width="100%" height="600" style="border:none;overflow:auto;"></iframe>
+  <script>
+    window.location.replace("${redirectUrl}");
+  </script>
+  <noscript>
+    Si no eres redirigido automáticamente, <a href=\"${redirectUrl}\">haz clic aquí</a>.
+  </noscript>
 </body>
 </html>`);
   } catch (err) {
