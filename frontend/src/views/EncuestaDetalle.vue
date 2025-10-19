@@ -122,8 +122,8 @@ const cancelarVotoPendiente = () => {
 
 <template>
   <div class="encuesta-detalle-container">
-    <div class="container">
-      <div v-if="loading" class="text-center py-5">
+    <div class="container p-0">
+      <div v-if="loading" class="text-center p-0 py-5 ">
         <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
           <span class="visually-hidden">Cargando...</span>
         </div>
@@ -138,7 +138,7 @@ const cancelarVotoPendiente = () => {
       </div>
 
       <div v-else-if="encuesta">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2 p-2">
           <button class="btn btn-outline-secondary" @click="handleVolver">
             ← Volver a encuestas
           </button>
