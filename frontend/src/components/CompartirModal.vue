@@ -1,5 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue'
+import WhatsappIcon from '@/assets/icons/whatsapp.svg'
+import TwitterIcon from '@/assets/icons/twitter.svg'
+import FacebookIcon from '@/assets/icons/facebook.svg'
 import html2canvas from 'html2canvas'
 import { copyToClipboard } from '@/utils/helpers'
 
@@ -117,21 +120,27 @@ const handleClose = () => {
                 class="btn btn-social btn-whatsapp"
                 @click="handleCompartirWhatsApp"
               >
-                <span class="social-icon">💬</span>
+                <span class="social-icon">
+                  <img :src="WhatsappIcon" alt="WhatsApp" width="24" height="24" />
+                </span>
                 WhatsApp
               </button>
               <button 
                 class="btn btn-social btn-twitter"
                 @click="handleCompartirTwitter"
               >
-                <span class="social-icon">🐦</span>
+                <span class="social-icon">
+                  <img :src="TwitterIcon" alt="Twitter" width="24" height="24" />
+                </span>
                 Twitter
               </button>
               <button 
                 class="btn btn-social btn-facebook"
                 @click="handleCompartirFacebook"
               >
-                <span class="social-icon">📘</span>
+                <span class="social-icon">
+                  <img :src="FacebookIcon" alt="Facebook" width="24" height="24" />
+                </span>
                 Facebook
               </button>
             </div>
