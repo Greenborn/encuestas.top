@@ -47,7 +47,7 @@ const crearGrafico = () => {
   }
 
   const ctx = chartCanvas.value.getContext('2d')
-  
+
   const config = {
     type: tipoGrafico.value,
     data: {
@@ -76,11 +76,11 @@ const crearGrafico = () => {
         },
         tooltip: {
           callbacks: {
-            label: function(context) {
+            label: function (context) {
               const label = context.label || ''
               const value = context.parsed.y || context.parsed || 0
-              const percentage = totalVotos.value > 0 
-                ? ((value / totalVotos.value) * 100).toFixed(1) 
+              const percentage = totalVotos.value > 0
+                ? ((value / totalVotos.value) * 100).toFixed(1)
                 : 0
               return `${label}: ${value} votos (${percentage}%)`
             }
@@ -124,67 +124,46 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="grafico-container">
-    <div class="grafico-header">
-      <div class="total-votos">
-        <span class="total-label">Total de votos:</span>
-  <span class="total-numero">{{ typeof totalVotos === 'number' ? totalVotos : (totalVotos?.value ?? 0) }}</span>
-      </div>
-      
-      <div class="grafico-controles">
-        <div class="btn-group" role="group">
-          <button 
-            type="button" 
-            class="btn btn-sm"
-            :class="tipoGrafico === 'pie' ? 'btn-primary' : 'btn-outline-primary'"
-            @click="cambiarTipoGrafico('pie')"
-          >
-            🥧 Torta
-          </button>
-          <button 
-            type="button" 
-            class="btn btn-sm"
-            :class="tipoGrafico === 'bar' ? 'btn-primary' : 'btn-outline-primary'"
-            @click="cambiarTipoGrafico('bar')"
-          >
-            📊 Barras
-          </button>
-        </div>
-        <button 
-          type="button" 
-          class="btn btn-sm btn-success ms-2"
-          @click="descargarGrafico"
-        >
-          💾 Descargar
+  <div class="grafico-header">
+    <div class="total-votos">
+      <span class="total-label">Total de votos:</span>
+      <span class="total-numero">{{ typeof totalVotos === 'number' ? totalVotos : (totalVotos?.value ?? 0) }}</span>
+    </div>
+
+    <div class="grafico-controles">
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-sm" :class="tipoGrafico === 'pie' ? 'btn-primary' : 'btn-outline-primary'"
+          @click="cambiarTipoGrafico('pie')">
+          🥧 Torta
+        </button>
+        <button type="button" class="btn btn-sm" :class="tipoGrafico === 'bar' ? 'btn-primary' : 'btn-outline-primary'"
+          @click="cambiarTipoGrafico('bar')">
+          📊 Barras
         </button>
       </div>
+      <button type="button" class="btn btn-sm btn-success ms-2" @click="descargarGrafico">
+        💾 Descargar
+      </button>
     </div>
+  </div>
 
-    <div class="grafico-wrapper">
-      <canvas ref="chartCanvas"></canvas>
-    </div>
+  <div class="grafico-wrapper p-0">
+    <canvas ref="chartCanvas"></canvas>
+  </div>
 
-    <div class="resultados-tabla">
-      <h4 class="tabla-titulo">Detalle de resultados</h4>
-      <div class="tabla-content">
-        <div 
-          v-for="opcion in opciones" 
-          :key="opcion.id_opcion"
-          class="tabla-fila"
-        >
-          <div class="fila-info">
-            <div 
-              class="fila-color" 
-              :style="{ backgroundColor: opcion.color }"
-            ></div>
-            <span class="fila-nombre">{{ opcion.texto_opcion }}</span>
-          </div>
-          <div class="fila-stats">
-            <span class="fila-votos">{{ resultados[opcion.id_opcion]?.votos || 0 }} votos</span>
-            <span class="fila-porcentaje">
-              {{ totalVotos > 0 ? ((resultados[opcion.id_opcion]?.votos || 0) / totalVotos * 100).toFixed(1) : 0 }}%
-            </span>
-          </div>
+  <div class="resultados-tabla">
+    <h4 class="tabla-titulo">Detalle de resultados</h4>
+    <div class="tabla-content">
+      <div v-for="opcion in opciones" :key="opcion.id_opcion" class="tabla-fila">
+        <div class="fila-info">
+          <div class="fila-color" :style="{ backgroundColor: opcion.color }"></div>
+          <span class="fila-nombre">{{ opcion.texto_opcion }}</span>
+        </div>
+        <div class="fila-stats">
+          <span class="fila-votos">{{ resultados[opcion.id_opcion]?.votos || 0 }} votos</span>
+          <span class="fila-porcentaje">
+            {{ totalVotos > 0 ? ((resultados[opcion.id_opcion]?.votos || 0) / totalVotos * 100).toFixed(1) : 0 }}%
+          </span>
         </div>
       </div>
     </div>
@@ -192,13 +171,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.grafico-container {
-  background: white;
-  border-radius: 15px;
-  padding: 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
 .grafico-header {
   display: flex;
   justify-content: space-between;
@@ -335,17 +307,17 @@ onMounted(() => {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .grafico-controles {
     justify-content: center;
   }
-  
+
   .tabla-fila {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
   }
-  
+
   .fila-stats {
     width: 100%;
     justify-content: space-between;
