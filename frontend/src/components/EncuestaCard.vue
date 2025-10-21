@@ -1,6 +1,20 @@
 <script setup>
 import { computed } from 'vue'
 import { formatDate, isExpired } from '@/utils/helpers'
+// Computed para opciones ordenadas por votos (desc)
+const opcionesOrdenadasPorVotos = computed(() => {
+  if (!props.encuesta.opciones || !Array.isArray(props.encuesta.opciones)) return [];
+  // Usar resultadoPreliminarParsed para obtener votos
+  return [...props.encuesta.opciones].sort((a, b) => {
+    const votosA = resultadoPreliminarParsed.value && resultadoPreliminarParsed.value[String(a.id_opcion)]?.votos !== undefined
+      ? resultadoPreliminarParsed.value[String(a.id_opcion)].votos
+      : 0;
+    const votosB = resultadoPreliminarParsed.value && resultadoPreliminarParsed.value[String(b.id_opcion)]?.votos !== undefined
+      ? resultadoPreliminarParsed.value[String(b.id_opcion)].votos
+      : 0;
+    return votosB - votosA;
+  });
+});
 
 
 import sessionModule from '@/session/sessionModule'
@@ -80,9 +94,9 @@ const handleVotar = () => {
         </div>
       </div>
 
-      <div class="resultados-preview" v-if="encuesta.opciones && encuesta.opciones.length">
+      <div class="resultados-preview" v-if="opcionesOrdenadasPorVotos.length">
         <div 
-          v-for="opcion in encuesta.opciones" 
+          v-for="opcion in opcionesOrdenadasPorVotos" 
           :key="opcion.id_opcion"
           class="resultado-barra"
         >
