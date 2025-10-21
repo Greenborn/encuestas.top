@@ -13,15 +13,29 @@ import './assets/styles/main.css'
 import sessionModule, { getUniqueId } from './session/sessionModule'
 getUniqueId()
 
+// Función para chequear validez de sesión al iniciar la app
+async function chequearSesionAlIniciar() {
+	const { isAuthenticated, verificarSesion, logout } = sessionModule;
+	if (isAuthenticated()) {
+		const resultado = await verificarSesion();
+		if (!resultado.activa) {
+			await logout();
+		}
+	}
+}
+
 // Configurar la URL del SSO desde .env
+
 sessionModule.setConfig({
 	ssoUrl: import.meta.env.VITE_URL_SSO_SERVICE,
 	appBaseUrl: import.meta.env.VITE_APP_BASE,
     storagePrefix: 'app_encuestas_',
-})
+});
+
+// Ejecutar chequeo de sesión después de configurar
+chequearSesionAlIniciar();
 
 const app = createApp(App)
 
 app.use(router)
-
 app.mount('#app')
