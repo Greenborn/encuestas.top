@@ -35,6 +35,17 @@ sessionModule.setConfig({
 // Ejecutar chequeo de sesión después de configurar
 chequearSesionAlIniciar();
 
+// Verificación periódica de sesión cada 5 minutos
+setInterval(async () => {
+	const { isAuthenticated, verificarSesion, logout } = sessionModule;
+	if (isAuthenticated()) {
+		const resultado = await verificarSesion();
+		if (!resultado.activa) {
+			await logout();
+		}
+	}
+}, 300 * 1000); // 300 segundos = 5 minutos
+
 const app = createApp(App)
 
 app.use(router)
