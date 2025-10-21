@@ -83,8 +83,29 @@ class VotosController {
         id_usuario: userId
       });
 
-        // Actualizar resultado preliminar
-        await VotosController.actualizarResultadoPreliminar(id);
+      // Actualizar resultado preliminar
+      await VotosController.actualizarResultadoPreliminar(id);
+
+      // Generar gráfico actualizado y guardarlo como imagen
+      const opcionesGrafico = await db('opcion_encuesta')
+        .select(
+          'opcion_encuesta.id_opcion',
+          'opcion_encuesta.texto_opcion',
+          'opcion_encuesta.color',
+          db.raw('COUNT(voto_encuesta.id) as votos')
+        )
+        .leftJoin('voto_encuesta', 'opcion_encuesta.id_opcion', 'voto_encuesta.id_opcion')
+        .where('opcion_encuesta.id_encuesta', id)
+        .groupBy('opcion_encuesta.id_opcion');
+
+      const { generarGraficoResultados } = require('../utils/graficos');
+      const fs = require('fs');
+      const path = require('path');
+      const buffer = await generarGraficoResultados({ opciones: opcionesGrafico, tipo: 'pie', width: 600, height: 400 });
+      const outputDir = path.join(__dirname, '../../public/graficos');
+      if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+      const outputPath = path.join(outputDir, `grafico_encuesta_${id}.png`);
+      fs.writeFileSync(outputPath, buffer);
 
       // Obtener información actualizada de la opción votada
       const opcionActualizada = await db('opcion_encuesta')

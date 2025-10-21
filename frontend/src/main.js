@@ -18,7 +18,8 @@ async function chequearSesionAlIniciar() {
 	const { isAuthenticated, verificarSesion, logout } = sessionModule;
 	if (isAuthenticated()) {
 		const resultado = await verificarSesion();
-		if (!resultado.activa) {
+		// Si la respuesta tiene data.valid === false, cerrar sesión
+		if (resultado?.data?.valid === false) {
 			await logout();
 		}
 	}
@@ -40,7 +41,7 @@ setInterval(async () => {
 	const { isAuthenticated, verificarSesion, logout } = sessionModule;
 	if (isAuthenticated()) {
 		const resultado = await verificarSesion();
-		if (!resultado.activa) {
+		if (resultado?.data?.valid === false) {
 			await logout();
 		}
 	}
