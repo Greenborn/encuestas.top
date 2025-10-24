@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue'
-import WhatsappIcon from '@/assets/icons/whatsapp.svg'
-import TwitterIcon from '@/assets/icons/twitter.svg'
-import FacebookIcon from '@/assets/icons/facebook.svg'
+import WhatsappIcon from '@/assets/icons/whatsapp.png'
+import TwitterIcon from '@/assets/icons/x.png'
+import FacebookIcon from '@/assets/icons/facebook.webp'
 import html2canvas from 'html2canvas'
 import { copyToClipboard } from '@/utils/helpers'
 
@@ -121,7 +121,6 @@ const handleClose = () => {
                 @click="handleCompartirWhatsApp"
               >
                 <span class="social-icon">
-                  <img :src="WhatsappIcon" alt="WhatsApp" width="24" height="24" />
                 </span>
                 WhatsApp
               </button>
@@ -130,16 +129,14 @@ const handleClose = () => {
                 @click="handleCompartirTwitter"
               >
                 <span class="social-icon">
-                  <img :src="TwitterIcon" alt="Twitter" width="24" height="24" />
                 </span>
-                Twitter
+                X
               </button>
               <button 
                 class="btn btn-social btn-facebook"
                 @click="handleCompartirFacebook"
               >
                 <span class="social-icon">
-                  <img :src="FacebookIcon" alt="Facebook" width="24" height="24" />
                 </span>
                 Facebook
               </button>
@@ -326,7 +323,7 @@ const handleClose = () => {
 }
 
 .btn-twitter {
-  background: linear-gradient(135deg, #1DA1F2 0%, #0d8bd9 100%);
+  background: linear-gradient(135deg, #000000 0%, #000000 100%);
   color: white;
 }
 
