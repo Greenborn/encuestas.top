@@ -138,7 +138,7 @@ const navigateTo = (path) => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: url('/fondo_home_1.jpeg') center center/cover no-repeat;
+  background: url('/fondo_home_1.jpeg') center 25%/cover no-repeat;
   z-index: 1;
 }
 
