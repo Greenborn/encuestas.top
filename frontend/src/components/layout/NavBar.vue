@@ -88,7 +88,7 @@ onUnmounted(() => {
   <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
     <div class="container">
       <router-link to="/" class="navbar-brand d-flex align-items-center" @click="closeMobileMenu">
-        <span class="brand-icon">📊</span>
+        <span class="brand-icon"><img src="/icon-encuesta.png" style="max-width: 1.75rem;height: auto;" alt="Logo"  /></span>
         <span class="brand-text">Encuesta<span class="brand-dot">.top</span></span>
       </router-link>
       
