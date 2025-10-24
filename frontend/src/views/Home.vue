@@ -124,11 +124,35 @@ const navigateTo = (path) => {
 }
 
 .hero-section {
-  background: linear-gradient(135deg, #74ACDF 0%, #0057B7 100%);
+  position: relative;
   color: white;
   padding: 100px 0 80px;
   margin-top: -80px;
+  overflow: hidden;
 }
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/fondo_home_1.jpeg') center center/cover no-repeat;
+  z-index: 1;
+}
+
+.hero-section::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #74ACDF99 0%, #0057B799 100%);
+  z-index: 2;
+}
+
 
 .hero-title {
   font-size: 3.5rem;
@@ -136,7 +160,10 @@ const navigateTo = (path) => {
   margin-bottom: 1.5rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
-
+.hero-section > .container {
+  position: relative;
+  z-index: 3;
+}
 .hero-subtitle {
   font-size: 1.3rem;
   margin-bottom: 2rem;
