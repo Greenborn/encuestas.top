@@ -41,7 +41,7 @@ const navigateTo = (path) => {
           <div class="col-lg-6">
             <div class="hero-illustration">
               <div class="illustration-card">
-                📊
+                <img class="img-responsive" src="/icon-encuesta.png" alt="Hero Illustration">
               </div>
             </div>
           </div>
@@ -179,10 +179,11 @@ const navigateTo = (path) => {
 .illustration-card {
   background: white;
   border-radius: 20px;
-  padding: 60px;
+  padding: 2rem;
   font-size: 10rem;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: float 3s ease-in-out infinite;
+  max-width: 21rem;
 }
 
 @keyframes float {
@@ -192,6 +193,11 @@ const navigateTo = (path) => {
   50% {
     transform: translateY(-20px);
   }
+}
+
+.img-responsive{
+  max-width: 100%;
+  height: auto;
 }
 
 .features-section {
