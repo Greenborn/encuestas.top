@@ -39,11 +39,7 @@ const navigateTo = (path) => {
             </div>
           </div>
           <div class="col-lg-6">
-            <div class="hero-illustration">
-              <div class="illustration-card">
-                <img class="img-responsive" src="/icon-encuesta.png" alt="Hero Illustration">
-              </div>
-            </div>
+            
           </div>
         </div>
       </div>
@@ -197,21 +193,6 @@ const navigateTo = (path) => {
   transform: translateY(-2px);
 }
 
-.hero-illustration {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.illustration-card {
-  background: white;
-  border-radius: 20px;
-  padding: 2rem;
-  font-size: 10rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: float 3s ease-in-out infinite;
-  max-width: 21rem;
-}
 
 @keyframes float {
   0%, 100% {
@@ -301,12 +282,6 @@ const navigateTo = (path) => {
   
   .hero-subtitle {
     font-size: 1.1rem;
-  }
-  
-  .illustration-card {
-    font-size: 6rem;
-    padding: 40px;
-    margin-top: 40px;
   }
 }
 
